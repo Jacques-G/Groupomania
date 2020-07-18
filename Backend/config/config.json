@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "userGroupo",
+    "password": "MySqluserGroupo15020710!",
+    "database": "groupomania",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "userGroupo",
+    "password": "MySqluserGroupo15020710!",
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "userGroupo",
+    "password": "MySqluserGroupo15020710!",
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
