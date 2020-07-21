@@ -122,30 +122,48 @@ exports.getProfile = (req, res, next) => {
     .catch(error => res.status(400).json({ error}));
 };
 
-exports.updateProfile = (req, res, next) => {
+
+exports.updateProfil = (req, res, next) => {
     const email = req.body.email;
 
     models.User.findOne({
         where: { email: email }
-    })
-    .then(function(userFound) {
-        if(userFound) {
-            let poste =req.body.poste
-            userFound.update({
-                poste: (poste ? poste: userFound.poste)
-            }).then(() => res.status(200).json({ message: "Profil modifié"}))
-            .catch(() => res.status(400).json({message: "Impossible de modifier votre profil"}))
+    })  
+    .then(function(userFounded) {
+        if(userFounded) {
+            const poste= req.params.poste;
+
+            userFounded.update({
+                poste: (poste ? poste: req.body.poste)
+            })
+            .then(res.status(200).json({ User, message: "Profil modifié !"}))
         }
-        return res.status(400).json({ error })
+        return res.status(400).json({ message: "Impossible de modifier votre profil."})
     })
-    .catch(() => res.status(400).json({ message: "Impossible d'accéder à votre profil"}));
+    .catch(res.status(400).json({ message: "Utilisateur introuvable"}))
 };
 
+
 exports.deleteUser = (req, res, next) => {
+    const email = req.body.email;
+
     models.User.findOne({
         where: { email: email}
     })
-    .then(user => {
+    .then(function(userFounded) {
+        if(userFounded) {
+            models.message.destroy({ where: { email: email }})
+            .then(userFounded => {
+                models.User.destroy({ userId: userFounded.id})
+                .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
+                .catch(error => res.status(400).json({ error }));
+            })
+        }else {
+            returnres.status(400).json({ error });
+        }
+    })
+    .catch( error => res.status(400).json({ error, message: 'Impossible de supprimé le compte.'}))
+    /*.then(user => {
         if(user) {
             models.Message.destroy({ where: { email: email }})
             .then(() => {
@@ -157,5 +175,5 @@ exports.deleteUser = (req, res, next) => {
             return res.status(400).json({ error });
         }
     })
-    .catch( error => res.status(400).json({ message: 'Impossible de supprimé le compte.'}))
+    .catch( error => res.status(400).json({ error, message: 'Impossible de supprimé le compte.'}))*/
 };

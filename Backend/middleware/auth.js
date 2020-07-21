@@ -20,8 +20,8 @@ module.exports = (req, res, next) => {
     const userId = decodedToken.userId;
 
     if(userId !== req.body.id) {
-        return res.status(400).json({ error })
+        return res.status(400).json({ message: "Mauvais Utilisateur" })
     } else {
-        next();
+        return res.status(200).json({ UserId})
     }*/
 };
