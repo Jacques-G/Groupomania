@@ -126,7 +126,6 @@ exports.updateProfile = (req, res, next) => {
     const email = req.body.email;
 
     models.User.findOne({
-        attributes: ['firstName', 'lastName', 'email', 'poste'],
         where: { email: email }
     })
     .then(function(userFound) {

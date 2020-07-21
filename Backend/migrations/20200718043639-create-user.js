@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       poste: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       isAdmin: {
