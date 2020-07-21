@@ -3,8 +3,12 @@ const jwt = require('jsonwebtoken'); // Token de protection
 const bcrypt = require('bcrypt'); // Protection du mot de passe utilisateur
 const models = require('../models');
 const user = require('../models/user');
+const asyncLib = require('async'); //Voir pour utiliser ou pas
 
-
+//CONSTANTES REGEX
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const pwRegex = /^(?=.*\d).{4,8}$/;
+//MIDDLEWARE 
 exports.limiter = rateLimit({
     windowMs: 2 * 60 * 1000,
     max: 2
@@ -23,6 +27,21 @@ exports.signup = (req, res, next) => {
     ////////////////////////////////////////////////////
     ////// VOIR POUR INTEGRER REGEX DE VALIDATION //////
     ///////////////////////////////////////////////////
+    if(firstName.length >= 15 || firstName.length <= 2) {
+        return res.status(400).json({ message: 'Votre prénom doit comprendre entre 2 et 15 lettres'})
+    }
+    
+    if(lastName.length >= 15 || lastName.length <= 2) {
+        return res.status(400).json({ message: 'Votre nom doit comprendre entre 2 et 15 lettres'})
+    }
+    
+    if(!emailRegex.test(email)) {
+        return res.status(400).json({ message: "email invalide !"})
+    }
+
+    if(!pwRegex.test(password)) {
+        return res.status(400).json({ message : 'Votre mot de passe doit contenir entre 4 et 8 caractère et contenir au moins 1 nombre'})
+    }
 
     models.User.findOne({
         attributes: ['email'],
@@ -62,9 +81,6 @@ exports.login = (req, res, next) => {
     if(email === null || password === null) {
         return res.status(400).json({ message: 'Veuillez remplir tous les champs !'})
     }
-    ////////////////////////////////////////////////////
-    ////// VOIR POUR INTEGRER REGEX DE VALIDATION //////
-    ///////////////////////////////////////////////////
 
     models.User.findOne({
         where: { email: email }
@@ -88,4 +104,59 @@ exports.login = (req, res, next) => {
 
     })
     .catch(error => res.status(500).json ({ error }));
+};
+
+exports.getProfile = (req, res, next) => {
+    const email = req.body.email;
+
+    models.User.findOne({
+        attributes: ['firstName', 'lastName', 'email', 'poste'],
+        where: { email: email }
+    })
+    .then( User => {
+        if(User) {
+            return res.status(200).json({ User });
+        }
+        return res.status(400).json({ error });
+    })
+    .catch(error => res.status(400).json({ error}));
+};
+
+exports.updateProfile = (req, res, next) => {
+    const email = req.body.email;
+
+    models.User.findOne({
+        attributes: ['firstName', 'lastName', 'email', 'poste'],
+        where: { email: email }
+    })
+    .then(function(userFound) {
+        if(userFound) {
+            let poste =req.body.poste
+            userFound.update({
+                poste: (poste ? poste: userFound.poste)
+            }).then(() => res.status(200).json({ message: "Profil modifié"}))
+            .catch(() => res.status(400).json({message: "Impossible de modifier votre profil"}))
+        }
+        return res.status(400).json({ error })
+    })
+    .catch(() => res.status(400).json({ message: "Impossible d'accéder à votre profil"}));
+};
+
+exports.deleteUser = (req, res, next) => {
+    models.User.findOne({
+        where: { email: email}
+    })
+    .then(user => {
+        if(user) {
+            models.Message.destroy({ where: { email: email }})
+            .then(() => {
+                models.User.destroy({ userId: user.id})
+                .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
+                .catch(error => res.status(400).json({ error }));
+            });
+        }else {
+            return res.status(400).json({ error });
+        }
+    })
+    .catch( error => res.status(400).json({ message: 'Impossible de supprimé le compte.'}))
 };
