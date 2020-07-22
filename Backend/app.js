@@ -5,6 +5,7 @@ require('dotenv').config();
 const helmet = require('helmet');
 
 const userRoutes = require('./routes/user'); // Déclaration du dossier des routes utilisateur
+const messageRoutes = require('./routes/message'); // Déclaration du dossier des routes messages
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
 
+app.use('/api/message', messageRoutes);
 app.use('/api/auth', userRoutes);
 
 module.exports = app;
