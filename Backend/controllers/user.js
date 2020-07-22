@@ -24,9 +24,7 @@ exports.signup = (req, res, next) => {
     if( firstName === null || lastName === null || email === null || password === null || poste === null) {
         return res.status(400).json({ message: 'Veuillez remplir tous les champs.'})
     }
-    ////////////////////////////////////////////////////
-    ////// VOIR POUR INTEGRER REGEX DE VALIDATION //////
-    ///////////////////////////////////////////////////
+
     if(firstName.length >= 15 || firstName.length <= 2) {
         return res.status(400).json({ message: 'Votre prénom doit comprendre entre 2 et 15 lettres'})
     }
@@ -116,8 +114,9 @@ exports.getProfile = (req, res, next) => {
     .then( User => {
         if(User) {
             return res.status(200).json({ User });
+        }else {
+            return res.status(400).json({ error });
         }
-        return res.status(400).json({ error });
     })
     .catch(error => res.status(400).json({ error}));
 };
@@ -136,13 +135,17 @@ exports.updateProfil = (req, res, next) => {
             userFounded.update({
                 poste: (poste ? poste: req.body.poste)
             })
-            .then(res.status(200).json({ User, message: "Profil modifié !"}))
+            //.then(() => res.status(200).json({ User, message: "Profil modifié !"}))
+            .then(userFounded => {
+                return res.status(200).json({ userFounded, message: "Profil mdofifié !"});
+                
+            })
+        }else {
+            return res.status(400).json({ message: "Impossible de modifier votre profil."});
         }
-        return res.status(400).json({ message: "Impossible de modifier votre profil."})
     })
     .catch(res.status(400).json({ message: "Utilisateur introuvable"}))
 };
-
 
 exports.deleteUser = (req, res, next) => {
     const email = req.body.email;
@@ -150,30 +153,39 @@ exports.deleteUser = (req, res, next) => {
     models.User.findOne({
         where: { email: email}
     })
-    .then(function(userFounded) {
-        if(userFounded) {
-            models.message.destroy({ where: { email: email }})
-            .then(userFounded => {
-                models.User.destroy({ userId: userFounded.id})
-                .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
-                .catch(error => res.status(400).json({ error }));
+    .then(function(userFoundForDelete) {
+        if(userFoundForDelete) {
+            userFoundForDelete.destroy({
+                email: userFoundForDelete.email
             })
+            .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
         }else {
-            returnres.status(400).json({ error });
+            return res.status(400).json({ error });
+
         }
     })
     .catch( error => res.status(400).json({ error, message: 'Impossible de supprimé le compte.'}))
-    /*.then(user => {
-        if(user) {
-            models.Message.destroy({ where: { email: email }})
-            .then(() => {
-                models.User.destroy({ userId: user.id})
+};
+/*exports.deleteUser = (req, res, next) => {
+    const email = req.body.email;
+
+    models.User.findOne({
+        where: { email: email}
+    })
+    .then(function(userFounded) {
+        if(userFounded) {
+            models.Message.destroy({ 
+                where: { email: email 
+            }})
+            .then(function(userFoundForDelete) {
+                userFoundForDelete.destroy({
+                    email: userFoundForDelete.email
+                })
                 .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
-                .catch(error => res.status(400).json({ error }));
-            });
+            })
         }else {
             return res.status(400).json({ error });
         }
     })
-    .catch( error => res.status(400).json({ error, message: 'Impossible de supprimé le compte.'}))*/
-};
+    .catch( error => res.status(400).json({ error, message: 'Impossible de supprimé le compte.'}))
+};*/
