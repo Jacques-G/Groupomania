@@ -1,5 +1,6 @@
 const models = require('../models');
 const jwt = require('jsonwebtoken');
+const message = require('../models/message');
 
 exports.createMessage = (req, res, next) => {
 
@@ -13,14 +14,6 @@ exports.createMessage = (req, res, next) => {
     if(title.length <= 2 || content.length <= 4) {
         res.status(400).json({ message: "Votre titre doit contenir au moins 2 characteres et votre contenu 4"})
     }
-    /*models.Message.create({
-        title: title,
-        content: content,
-        likes: 0,
-        idUsers: User.id
-    })
-    .then(() => res.status(201).json({ Message }))
-    .catch(error => res.status(400).json({ error }));*/
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
@@ -29,22 +22,25 @@ exports.createMessage = (req, res, next) => {
         attributes: ['id', 'firstName', 'lastName', 'poste'],
         where: {id: userId}
     })
-    .then(function(userFound) {  
+    .then(function(userFound) { 
         if(userFound) {
             models.Message.create({
                 title: title,
                 content: content,
                 likes: 0,
-                idUsers: userFound.id
+                UserId: userId,
             })
             .then((newMessage) => {
-                res.status(201).json({ newMessage })
+                res.status(201).json({ newMessage, userFound })
             })
             .catch(error => res.status(400).json({ error }));
+        }else {
+            return res.status(400).json({ message: "Message non envoyé" })
         }
-        return res.status(400).json({ message: "Message non envoyé" })
+        
     })
-    .catch(res.status(400).json({ message: "Utilisateur introuvable"}))
+    //.catch(res.status(400).json({ message: "Utilisateur introuvable"}))
+    .catch(error => res.statsu(400).json({ error }));
 };
 
 exports.getAllMessage = (req, res, next) => {
@@ -54,10 +50,10 @@ exports.getAllMessage = (req, res, next) => {
     let order = req.query.order;
 
     models.Message.findAll({
-        order: [(order != null) ? order.split(':') : ['title', 'ASC']],
+        order: [(order != null) ? order.split(':') : ['createdAt', 'DESC']],
         attributes: (fields != '*' && fields != null) ? fields.split(',') : null,
-        limit: (!isNan(limit)) ? limit: null,
-        offset: (!isNan(offset)) ? offset: null,
+        //limit: (!isNan(limit)) ? limit: 15,
+        //offset: (!isNan(offset)) ? offset: null,
         include: [{
             model: models.User,
             attributes: ['firstName', 'lastName']
@@ -79,5 +75,45 @@ exports.modifyMessage = (req, res, next) => {
 };
 
 exports.deleteMessage = (req, res, next) => {
-    
+
+    let messageId = req.body.id;
+    //let orderMessage = req.body.UserId;
+
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+
+    models.User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'poste'],
+        where: {id: userId}
+    })
+    .then(function(userFound) {
+        if(userFound) {
+            if(userFound.id === userId || User.isAdmin === 1) {
+                models.Message.destroy({
+                    where: {id: messageId}
+                })
+                .then(res.status(201).json({ message : "Message Supprimé !"}))
+            }else if(userFound.id !== userId) {
+                return res.status(400).json({ message: "Vous ne pouvez supprimé ce message" })
+            }else {
+                return res.status(400).json({ message: "Vous ne pouvez supprimé ce message" })
+            }
+            
+        }else {
+            return res.status(400).json({ message: "Impossible de supprimé ce message" })
+        }
+    })
+    .catch(error => res.status(400).json({ error }))
+    /*.then(function(userFound) {
+        if(userFound && orderMessage == userId){
+            models.Message.destroy({
+                where: {id: messageId}
+            })
+            .then(res.status(201).json({ message : "Message Supprimé !"}))
+        }else {
+            return res.status(400).json({ message: "Impossible de supprimé ce message" })
+        }
+    })
+    .catch(error => res.status(400).json({ error }));*/
 };

@@ -17,13 +17,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       attachment: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       likes: {allowNull: false,
         type: Sequelize.INTEGER
       },
-      idUsers: {
+      UserId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -33,7 +33,7 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATETIME
       },
       updatedAt: {
         allowNull: false,
