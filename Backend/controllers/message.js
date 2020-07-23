@@ -95,13 +95,13 @@ exports.deleteMessage = (req, res, next) => {
                 })
                 .then(res.status(201).json({ message : "Message Supprimé !"}))
             }else if(userFound.id !== userId) {
-                return res.status(400).json({ message: "Vous ne pouvez supprimé ce message" })
+                return res.status(400).json({ message: "Vous ne pouvez pas supprimer ce message" })
             }else {
-                return res.status(400).json({ message: "Vous ne pouvez supprimé ce message" })
+                return res.status(400).json({ message: "Vous ne pouvez pas supprimer ce message" })
             }
             
         }else {
-            return res.status(400).json({ message: "Impossible de supprimé ce message" })
+            return res.status(400).json({ message: "Impossible de supprimer ce message" })
         }
     })
     .catch(error => res.status(400).json({ error }))
