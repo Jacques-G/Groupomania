@@ -72,12 +72,34 @@ exports.getAllMessage = (req, res, next) => {
 
 exports.modifyMessage = (req, res, next) => {
 
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+
+    models.User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'poste'],
+        where: {id: userId}
+    })
+    .then(function(userFound) {
+        if(userFound && userFound.id === userId) {
+            models.Message.update({
+                content: req.body.content,
+                attachment: req.body.attachment
+            },
+            {where: {id: req.body.id}})
+            .then(res.status(201).json({ message: "Message Modifié !"}))
+            .catch(res.status(400).json({ message: "Impossible de modifier ce message."}))
+        }else {
+            return res.status(400).json({ message: "Vous ne pouvez modifier ce message."})
+        }
+
+    })
+    .catch(error => res.status(400).json({ error }));
 };
 
 exports.deleteMessage = (req, res, next) => {
 
     let messageId = req.body.id;
-    //let orderMessage = req.body.UserId;
 
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
@@ -105,15 +127,18 @@ exports.deleteMessage = (req, res, next) => {
         }
     })
     .catch(error => res.status(400).json({ error }))
-    /*.then(function(userFound) {
-        if(userFound && orderMessage == userId){
-            models.Message.destroy({
-                where: {id: messageId}
-            })
-            .then(res.status(201).json({ message : "Message Supprimé !"}))
-        }else {
-            return res.status(400).json({ message: "Impossible de supprimé ce message" })
-        }
-    })
-    .catch(error => res.status(400).json({ error }));*/
+};
+
+exports.likeOrNot = (req, res, next) => {
+    let userliked = [] ;
+    let likes = 0; 
+
+    if(req.body.likes === 1) {
+        models.Message.update({
+            likes: req.body.likes++
+        }, {
+            where: {id: req.params.id}
+        })
+        
+    }
 };

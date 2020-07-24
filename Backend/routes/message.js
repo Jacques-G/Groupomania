@@ -5,8 +5,9 @@ const auth = require('../middleware/auth')
 
 const messageCtrl = require('../controllers/message');
 
-router.post('/new', messageCtrl.createMessage);
-router.get('/all',  messageCtrl.getAllMessage);
-router.delete('/delete', messageCtrl.deleteMessage);
+router.post('/new', auth, messageCtrl.createMessage);
+router.get('/all',  auth, messageCtrl.getAllMessage);
+router.put('/:id', auth, messageCtrl.modifyMessage);
+router.delete('/delete', auth, messageCtrl.deleteMessage);
 
 module.exports = router;
