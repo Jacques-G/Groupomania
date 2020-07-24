@@ -2,8 +2,7 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken'); // Token de protection
 const bcrypt = require('bcrypt'); // Protection du mot de passe utilisateur
 const models = require('../models');
-const user = require('../models/user');
-const asyncLib = require('async'); //Voir pour utiliser ou pas
+
 
 //CONSTANTES REGEX
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -102,6 +101,12 @@ exports.login = (req, res, next) => {
 
     })
     .catch(error => res.status(500).json ({ error }));
+};
+
+exports.logout = (req, res, next) => { // A vérifier
+   
+    req.logout();
+    res.redirect('/');
 };
 
 exports.getProfile = (req, res, next) => {
