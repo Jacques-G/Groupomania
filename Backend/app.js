@@ -7,6 +7,8 @@ const helmet = require('helmet');
 const userRoutes = require('./routes/user'); // Déclaration du dossier des routes utilisateur
 const messageRoutes = require('./routes/message'); // Déclaration du dossier des routes messages
 
+const path = require('path');//nécessaire pour multer (importation des fichiers)
+
 const app = express();
 
 
