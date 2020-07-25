@@ -19,15 +19,15 @@ exports.createMessage = (req, res, next) => { //Creation d'un message
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
 
-    let userliked = [] ;
-    let like = 0; 
-
     models.User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'poste'],
         where: {id: userId}
     })
     .then(function(userFound) { 
         if(userFound) {
+            let userliked = [] ;
+            let like = 0; 
+
             models.Message.create({
                 title: title,
                 content: content,
@@ -56,7 +56,7 @@ exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
         attributes: (fields != '*' && fields != null) ? fields.split(',') : null,
         include: [{
             model: models.User,
-            attributes: ['firstName', 'lastName']
+            attributes: ['firstName', 'lastName', 'poste']
         }]
     })
     .then(function(messages) {
