@@ -103,12 +103,6 @@ exports.login = (req, res, next) => { // Connexion à un compte existant
     .catch(error => res.status(500).json ({ error }));
 };
 
-exports.logout = (req, res, next) => { 
-   
-    req.logout();
-    res.redirect('/');
-};
-
 exports.getProfile = (req, res, next) => { //Profil Utilisateur
 
     models.User.findOne({
