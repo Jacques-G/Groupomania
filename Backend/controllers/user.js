@@ -13,7 +13,7 @@ exports.limiter = rateLimit({
     max: 2
 });
 
-exports.signup = (req, res, next) => {
+exports.signup = (req, res, next) => { //Inscription au site
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const email = req.body.email;
@@ -40,13 +40,13 @@ exports.signup = (req, res, next) => {
         return res.status(400).json({ message : 'Votre mot de passe doit contenir entre 4 et 8 caractère et contenir au moins 1 nombre'})
     }
 
-    models.User.findOne({
+    models.User.findOne({ // Je vérifie que l'email n'existe pas déjà
         attributes: ['email'],
         where: { email: email }
     })
     .then(function(userFound) {
         if(!userFound) {
-            bcrypt.hash(password, 10, function(err, bcryptedPassword) {
+            bcrypt.hash(password, 10, function(err, bcryptedPassword) { //Hashage du mot de passe
                 let newUser = models.User.create({
                     firstName: firstName,
                     lastName: lastName,
@@ -64,14 +64,14 @@ exports.signup = (req, res, next) => {
             });
             
         } else {
-            return res.status(409).json({ message : " L'utilisateur existe déjà !"})
+            return res.status(403).json({ message : " L'utilisateur existe déjà !"})
         }
     })
     .catch(error => res.status(500).json({ error }));
    
 };
 
-exports.login = (req, res, next) => {
+exports.login = (req, res, next) => { // Connexion à un compte existant
     let email = req.body.email;
     let password = req.body.password;
 
@@ -91,30 +91,29 @@ exports.login = (req, res, next) => {
                         token: jwt.sign({userId: userFound.id }, 'RANDOM_TOKEN_SECRET', { expiresIn: '2h'})
                     })
                 } else {
-                    return res.status(400).json({message: 'Mot de passe incorrect.'})
+                    return res.status(403).json({message: 'Mot de passe incorrect.'})
                 }
             })
 
         }else {
-            return res.status(400).json({message: "L'utilisateur n'existe pas dans la BD."})
+            return res.status(500).json({message: "L'utilisateur n'existe pas dans la BD."})
         }
 
     })
     .catch(error => res.status(500).json ({ error }));
 };
 
-exports.logout = (req, res, next) => { // A vérifier
+exports.logout = (req, res, next) => { 
    
     req.logout();
     res.redirect('/');
 };
 
-exports.getProfile = (req, res, next) => {
-    const email = req.body.email;
+exports.getProfile = (req, res, next) => { //Profil Utilisateur
 
     models.User.findOne({
         attributes: ['firstName', 'lastName', 'email', 'poste'],
-        where: { email: email }
+        where: { id: req.params.id }
     })
     .then( User => {
         if(User) {
@@ -123,15 +122,14 @@ exports.getProfile = (req, res, next) => {
             return res.status(400).json({ error });
         }
     })
-    .catch(error => res.status(400).json({ error}));
+    .catch(error => res.status(500).json({ error}));
 };
 
 
-exports.updateProfil = (req, res, next) => {
-    const email = req.body.email;
-
+exports.updateProfil = (req, res, next) => { //Modification d'un Profil Utilisateur
+    
     models.User.findOne({
-        where: { email: email }
+        where: { id: req.params.id }
     })  
     .then(function(userFounded) {
         if(userFounded) {
@@ -140,7 +138,6 @@ exports.updateProfil = (req, res, next) => {
             userFounded.update({
                 poste: (poste ? poste: req.body.poste)
             })
-            //.then(() => res.status(200).json({ User, message: "Profil modifié !"}))
             .then(userFounded => {
                 return res.status(200).json({ userFounded, message: "Profil mdofifié !"});
                 
@@ -149,48 +146,25 @@ exports.updateProfil = (req, res, next) => {
             return res.status(400).json({ message: "Impossible de modifier votre profil."});
         }
     })
-    .catch(res.status(400).json({ message: "Utilisateur introuvable"}))
+    .catch(res.status(500).json({ message: "Utilisateur introuvable"}))
 };
 
-exports.deleteUser = (req, res, next) => {
-    const email = req.body.email;
+exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateur
 
     models.User.findOne({
-        where: { email: email}
+        where: { id: req.params.id}
     })
     .then(function(userFoundForDelete) {
         if(userFoundForDelete) {
             userFoundForDelete.destroy({
                 email: userFoundForDelete.email
             })
-            .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
+            .then(() => res.status(201).json({ message: 'Utilisateur supprimé !'}))
+            .catch( error => res.status(500).json({ error, message: "L'utilisateur n'a pas été supprimé."}))
         }else {
-            return res.status(400).json({ error });
+            return res.status(500).json({ message: "L'utilisateur, n'a pas été trouvé, il ne peut être supprimé." });
 
         }
     })
-    .catch( error => res.status(400).json({ error, message: 'Impossible de supprimé le compte.'}))
+    .catch( error => res.status(500).json({ error, message: 'Impossible de supprimer le compte.'}))
 };
-/*exports.deleteUser = (req, res, next) => {
-    const email = req.body.email;
-
-    models.User.findOne({
-        where: { email: email}
-    })
-    .then(function(userFounded) {
-        if(userFounded) {
-            models.Message.destroy({ 
-                where: { email: email 
-            }})
-            .then(function(userFoundForDelete) {
-                userFoundForDelete.destroy({
-                    email: userFoundForDelete.email
-                })
-                .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
-            })
-        }else {
-            return res.status(400).json({ error });
-        }
-    })
-    .catch( error => res.status(400).json({ error, message: 'Impossible de supprimé le compte.'}))
-};*/

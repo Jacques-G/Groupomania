@@ -15,14 +15,5 @@ module.exports = (req, res, next) => {
             error : new Error('Invalid request !')
         });
     }
-    /*const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    const userId = decodedToken.userId;
-
-    if(userId !== req.body.id) {
-        return res.status(400).json({ message: "Mauvais Utilisateur" })
-    } else {
-        return res.status(200).json({ UserId})
-    }*/
 };
 
