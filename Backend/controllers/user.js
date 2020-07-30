@@ -133,7 +133,7 @@ exports.updateProfil = (req, res, next) => { //Modification d'un Profil Utilisat
                 job: (job ? job: req.body.job)
             })
             .then(userFounded => {
-                return res.status(200).json({ userFounded, message: "Profil mdofifié !"});
+                return res.status(200).json({ User: userFounded, message: "Profil mdofifié !"});
                 
             })
         }else {

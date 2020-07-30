@@ -95,8 +95,54 @@ exports.modifyMessage = (req, res, next) => { //Modification d'un Message
 
     })
     .catch(error => res.status(500).json({ error }));
-};
+}
+exports.deleteMessage = (req, res, next) => {
 
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+    
+    models.User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'job'],
+        where: { id: userId }
+    })
+    .then(function(userFound) {
+        if (userFound) {
+            if (userFound.id === userId || userFound.isAdmin === 1) { //Vérification des droits pour le faire.
+                models.Message.findOne({
+                    where: { id: req.params.id}
+                })
+                .then(function(messageFound) {
+                    if (messageFound && userId === messageFound.UserId) {
+                        const filename = Message.attachment.split('/images/')[1];
+                        fs.unlink(`images/${filename}`, () => {
+                            
+                            models.Message.destroy({
+                                where: {id: req.params.id}
+                            })
+                            .then(res.status(200).json({ message : "Message Supprimé !"}))
+                            .catch(res .status(500).json({ message : "Impossible de supprimer ce message" }));
+                        })
+                    } else {
+                        return res.status(400).json({ message: "Il est impossible de récupérer le message."})
+                    }
+                })
+                .catch(res.status(500).json({message: "Impossible de récupérer le message désiré, impossible de le supprimer."}));
+
+            }else if (userFound.id !== userId) {
+                return res.status(400).json({ message : "Vous n'avez pas les droits pour supprimer ce message."});
+
+            }else {
+                return res.status(400).json({ message: "Vous ne pouvez supprimer ce message."});
+            }
+
+        }else {
+            return res.status(400).json({ message: "L'utilisateur n'a pas été trouvé, il est donc impossible de supprimer le message."});
+        }
+    })
+    .catch(error => res.status(500).json({ error }));
+};
+/*
 exports.deleteMessage = (req, res, next) => { //Suppression d'un Message
 
     const token = req.headers.authorization.split(' ')[1];
@@ -110,11 +156,11 @@ exports.deleteMessage = (req, res, next) => { //Suppression d'un Message
     .then(function(userFound) {
         if(userFound) {
             if(userFound.id === userId || User.isAdmin === 1) { //Vérification des droits pour le faire.
-                const filename = Message.imageUrl.split('/images/')[1];
+                const filename = Message.attachment.split('/images/')[1];
                 fs.unlink(`images/${filename}`, () => {
                     
                     models.Message.destroy({
-                        where: {id: id}
+                        where: {id: req.params.id}
                     })
                     .then(res.status(200).json({ message : "Message Supprimé !"}))
                     .catch(res .status(500).json({ message : "Impossible de supprimer ce message" }));
@@ -130,7 +176,7 @@ exports.deleteMessage = (req, res, next) => { //Suppression d'un Message
         }
     })
     .catch(error => res.status(500).json({ error }));
-};
+};*/
 
 exports.likeOrNot = (req, res, next) => {
 
