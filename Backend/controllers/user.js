@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt'); // Protection du mot de passe utilisateur
 const models = require('../models');
 
 
+
 //CONSTANTES REGEX
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const pwRegex = /^(?=.*\d).{4,8}$/;
@@ -118,29 +119,25 @@ exports.getProfile = (req, res, next) => { //Profil Utilisateur
     })
     .catch(error => res.status(500).json({ error}));
 };
-
-
-exports.updateProfil = (req, res, next) => { //Modification d'un Profil Utilisateur
-    
+exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisateur
     models.User.findOne({
-        where: { id: req.params.id }
-    })  
-    .then(function(userFounded) {
-        if(userFounded) {
-            const job= req.params.job;
-
-            userFounded.update({
-                job: (job ? job: req.body.job)
+        attributes: ['job', 'id'],
+        where: { id: req.params.id}
+    })
+    .then((userFound) => {
+        if (userFound) {
+            userFound.update({
+               job:  req.body.job
             })
-            .then(userFounded => {
-                return res.status(200).json({ User: userFounded, message: "Profil mdofifié !"});
-                
+            .then(userFound => {
+                return res.status(200).json({ User: userFound, message: "Profil modifié !"})
             })
-        }else {
-            return res.status(400).json({ message: "Utilisateur introuvable, il est donc impossible de modifier votre profil."});
+            .catch(error => res.status(400).json({ error, message: "Impossible de modifié votre profil."}));
+        } else {
+            return res.status(400).json({ message: "Utilisateur introuvable."});
         }
     })
-    .catch(res.status(500).json({ message: "Un erreur interne est survenue."}));
+    .catch(error => res.status(500).json({ error, message: "Impossible de récupérer l'utilisateur"}));
 };
 
 exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateur

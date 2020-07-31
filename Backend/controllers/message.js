@@ -106,94 +106,34 @@ exports.deleteMessage = (req, res, next) => {
         attributes: ['id', 'firstName', 'lastName', 'job'],
         where: { id: userId }
     })
-    .then(function(userFound) {
+    .then((userFound) => {
         if (userFound) {
             models.Message.findOne({
                 where: {id: req.params.id}
             })
-            .then(function(messageFound) {
+            .then((messageFound) => {
                 if (messageFound) {
-                    if (userFound.id === userId || userFound.isAdmin === 1) {
+                    if (messageFound.UserId === userId || userFound.isAdmin === 1) {
                         models.Message.destroy({
                             where: {id: req.params.id}
                         })
                         .then(res.status(200).json({ message: "Message supprimé !"}))
-                        .catch(res.status(400).json({ message: " Impossible de supprimer le message"}));
+                        .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
                     } else {
                         res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
                     }
                 } else {
-                    return res.status(400).json({ message: "Impossible de supprimer le message"});
+                    return res.status(500).json({ message: "Impossible de supprimer le message"});
                 }
             })
-            .catch(res.status(500).json({ message: "Message introuvable"}));
+            .catch(error => res.status(500).json({ error, message: "Message introuvable"}));
         } else {
-            return res.status(500).json({ message: "Utilisateur introuvable !"});
+            return res.status(400).json({ message: "Utilisateur introuvable !"});
         }
     })
     .catch(error => res.status(500).json({ error }));
 };
-/*
-if (userFound.id === userId || userFound.isAdmin === 1) { //Vérification des droits pour le faire.
-                models.Message.findOne({
-                    where: { id: req.params.id}
-                })
-                .then(function(messageFound) {
-                    if (messageFound && userId === messageFound.UserId) {
-                        const filename = Message.attachment.split('/images/')[1];
-                        fs.unlink(`images/${filename}`, () => {
-                            
-                            models.Message.destroy({
-                                where: {id: req.params.id}
-                            })
-                            .then(res.status(200).json({ message : "Message Supprimé !"}))
-                            .catch(res.status(500).json({ message : "Impossible de supprimer ce message" }));
-                        })
-                    } else {
-                        return res.status(400).json({ message: "Il est impossible de récupérer le message."})
-                    }
-                })
-                .catch(res.status(500).json({message: "Impossible de récupérer le message désiré, impossible de le supprimer."}));
 
-            }else {
-                return res.status(400).json({ message: "Vous ne pouvez supprimer ce message."});
-            }
-*/
-/*
-exports.deleteMessage = (req, res, next) => { //Suppression d'un Message
-
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    const userId = decodedToken.userId;
-
-    models.User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'job'],
-        where: {id: userId}
-    })
-    .then(function(userFound) {
-        if(userFound) {
-            if(userFound.id === userId || User.isAdmin === 1) { //Vérification des droits pour le faire.
-                const filename = Message.attachment.split('/images/')[1];
-                fs.unlink(`images/${filename}`, () => {
-                    
-                    models.Message.destroy({
-                        where: {id: req.params.id}
-                    })
-                    .then(res.status(200).json({ message : "Message Supprimé !"}))
-                    .catch(res .status(500).json({ message : "Impossible de supprimer ce message" }));
-                })
-            }else if (userFound.id !== userId) {
-                return res.status(400).json({ message: "Vous ne pouvez pas supprimer ce message" });
-            }else {
-                return res.status(400).json({ message: "Vous ne pouvez pas supprimer ce message" });
-            }
-            
-        }else {
-            return res.status(400).json({ message: "Impossible de supprimer ce message" });
-        }
-    })
-    .catch(error => res.status(500).json({ error }));
-};*/
 
 exports.likeOrNot = (req, res, next) => {
 
