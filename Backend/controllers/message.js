@@ -2,13 +2,11 @@ const models = require('../models');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-exports.createMessage = (req, res, next) => { //Creation d'un message 
+exports.createMessage = (req, res, next) => { //Creation d'un message  
 
     let title = req.body.title;
     let content = req.body.content;
-    let attachment =`${req.protocol}://${req.get('host')}/images/${req.body.attachment}`;
-    
-
+    let attachmentURL =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
     if (title === null || content === null) {
         res.status(400).json({ message: "Veuillez remplir tous les champs !"})
     }
@@ -23,7 +21,7 @@ exports.createMessage = (req, res, next) => { //Creation d'un message
         attributes: ['id', 'firstName', 'lastName', 'job'],
         where: {id: userId}
     })
-    .then(function(userFound) { 
+    .then((userFound) => { 
         if(userFound) {
             let userliked = [] ;
             let like = 0; 
@@ -31,20 +29,20 @@ exports.createMessage = (req, res, next) => { //Creation d'un message
             models.Message.create({
                 title: title,
                 content: content,
-                attachment: attachment,
+                attachment: attachmentURL,
                 likes: 0,
                 UserId: userId,
             })
             .then((newMessage) => {
-                res.status(201).json({ newMessage, userFound })
+                 res.status(201).json({ newMessage, User: userFound })
             })
-            .catch(error => res.status(400).json({ error }));
+            .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }));
         }else {
-            return res.status(500).json({ message: "L'utilisateur n'a pas été trouvé, le message n'est donc pas envoyé" });
+            return res.status(400).json({ message: "Impossible de créer le message." });
         }
         
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error, message: "L'utilisateur n'a pas été trouvé, le message n'est donc pas envoyé" }));
 };
 
 exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
@@ -59,7 +57,7 @@ exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
             attributes: ['firstName', 'lastName', 'job']
         }]
     })
-    .then(function(messages) {
+    .then((messages) => {
         if (messages) {
             res.status(200).json(messages);
         }else {
@@ -80,7 +78,7 @@ exports.modifyMessage = (req, res, next) => { //Modification d'un Message
         attributes: ['id', 'firstName', 'lastName', 'job'],
         where: {id: userId}
     })
-    .then(function(userFound) {
+    .then((userFound) => {
         if (userFound && userFound.id === userId) {
             models.Message.update({
                 content: req.body.content,
@@ -123,7 +121,7 @@ exports.deleteMessage = (req, res, next) => {
                         res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
                     }
                 } else {
-                    return res.status(500).json({ message: "Impossible de supprimer le message"});
+                    return res.status(400).json({ message: "Impossible de supprimer le message"});
                 }
             })
             .catch(error => res.status(500).json({ error, message: "Message introuvable"}));

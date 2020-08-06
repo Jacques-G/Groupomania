@@ -45,7 +45,7 @@ exports.signup = (req, res, next) => { //Inscription au site
         attributes: ['email'],
         where: { email: email }
     })
-    .then(function(userFound) {
+    .then((userFound) => {
         if (!userFound) {
             bcrypt.hash(password, 10, function(err, bcryptedPassword) { //Hashage du mot de passe
                 let newUser = models.User.create({
@@ -83,7 +83,7 @@ exports.login = (req, res, next) => { // Connexion à un compte existant
     models.User.findOne({
         where: { email: email }
     })
-    .then(function(userFound) {
+    .then((userFound) => {
         if(userFound) {
             bcrypt.compare(password, userFound.password, function(errBycrypt, resBycrypt) {
                 if(resBycrypt) {
@@ -132,7 +132,7 @@ exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisate
             .then(userFound => {
                 return res.status(200).json({ User: userFound, message: "Profil modifié !"})
             })
-            .catch(error => res.status(400).json({ error, message: "Impossible de modifié votre profil."}));
+            .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));
         } else {
             return res.status(400).json({ message: "Utilisateur introuvable."});
         }
@@ -145,7 +145,7 @@ exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateu
     models.User.findOne({
         where: { id: req.params.id}
     })
-    .then(function(userFoundForDelete) {
+    .then((userFoundForDelete) => {
         if(userFoundForDelete) {
             userFoundForDelete.destroy({
                 email: userFoundForDelete.email
@@ -153,7 +153,7 @@ exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateu
             .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
             .catch( error => res.status(500).json({ error, message: "L'utilisateur n'a pas été supprimé."}));
         }else {
-            return res.status(500).json({ message: "L'utilisateur n'a pas été trouvé, il ne peut être supprimé." });
+            return res.status(400).json({ message: "L'utilisateur n'a pas été trouvé, il ne peut être supprimé." });
 
         }
     })
