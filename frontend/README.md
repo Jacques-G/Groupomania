@@ -1,6 +1,6 @@
-# groupomania
+# frontend
 
-> Reseau social d'entreprise Groupomania
+> Frontend de l'api Groupomania
 
 ## Build Setup
 
