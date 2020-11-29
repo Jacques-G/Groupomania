@@ -36,11 +36,6 @@ export default {
     components: {
         ban: Ban
     },
-    userFirstName: "",
-    userLastName: "",
-    userEmail: "",
-    userPassword: "",
-    userJob: "",
     methods: {
         envoyer: function() {
             alert('L\'utilisateur suivant a été créé : \
@@ -50,7 +45,6 @@ export default {
         }
     }
 }
-
 </script>
 <style lang="scss" scoped>
 #form{
