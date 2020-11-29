@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ban />
+        <banniere /><!--Appel du composant Banniere pour affichage-->
         <form id="form">
             <div class="labels">
                 <label for="firstName">
@@ -20,28 +20,52 @@
                 </label>
             </div>
             <div class="inputs">
-                <input v-model="userFirstName" type="text" id="firstName">
-                <input v-model="userLastName" type="text" id="lastName">
-                <input v-model="userEmail" type="text" id="email">
-                <input v-model="userPassword" type="text" id="password">
-                <input v-model="userJob" type="text" id="job">
+                <input v-model="firstName" type="text" id="firstName">
+                <input v-model="lastName" type="text" id="lastName">
+                <input v-model="email" type="text" id="email">
+                <input v-model="password" type="password" id="password">
+                <input v-model="job" type="text" id="job">
             </div>
         </form>
-        <button v-on:click="envoyer">S'inscrire</button>
+        <button type="submit" v-on:click="envoyer">S'inscrire</button>
     </div>
 </template>
 <script>
-import Ban from "@/components/Banniere"
+import Banniere from "@/components/Banniere" //Import du composant Banniere
+import axios from "axios" // Import d'Axios pour requete HTTP
 export default {
     components: {
-        ban: Ban
+        Banniere
+    },
+    data() {
+        return {
+            url: 'http://localhost:3000/api/auth/signup',
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            job: "",
+        }
     },
     methods: {
         envoyer: function() {
-            alert('L\'utilisateur suivant a été créé : \
-            ' + this.userFirstName + ' ' + this.userLastName + '\
-            ' + this.userEmail + '\
-            ' + this.userJob)
+            let newUser = {
+                firstName: this.firstName,
+                lastName: this.lastName,
+                email: this.email,
+                password: this.password,
+                job: this.job
+            };
+            console.log(newUser);
+            axios.post(this.url, {
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            }, newUser)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch((error) => console.log(error))
         }
     }
 }
