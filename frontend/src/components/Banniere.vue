@@ -7,7 +7,9 @@
 </template>
 
 <script>
-
+export default { //Ajout pour test
+  name: 'Banniere'
+}
 </script>
 
 <style lang="scss" scoped>
