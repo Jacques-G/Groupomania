@@ -12,7 +12,7 @@
             </div>
             <div class="inputs">
                 <input v-model="userEmail" type="text" id="email">
-                <input v-model="userPass" type="text" id="password">
+                <input v-model="userPass" type="password" id="password">
             </div>
         </form>
         <button v-on:click="envoyer">Se connecter</button>

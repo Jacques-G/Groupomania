@@ -58,7 +58,7 @@ export default {
             };
             console.log(newUser);
             axios.post(this.url, {
-                headers: {
+                header: {
                     'Content-type': 'application/json'
                 }
             }, newUser)
