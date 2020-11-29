@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ban />
+        <banniere />
         <form id="form">
             <div class="labels">
                 <label for="email">
@@ -20,18 +20,45 @@
 </template>
 
 <script>
-import Ban from "@/components/Banniere"
+import Banniere from "@/components/Banniere"
+import axios from "axios"
+
 export default {
     components: {
-        ban : Ban
+        Banniere
     },
-    userEmail: "",
+    data() {
+        return {
+            userEmail: "",
+            userPass: "",
+            url: "http://localhost:3000/api/auth/login"
+        }
+    },
+    methods: {
+        envoyer: function() {
+            const user = {
+                email: this.userEmail,
+                password:  this.userPass
+            };
+            const header = {
+                    'Content-type': 'application/json'
+            };
+            axios.post(this.url, user, { header })
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
+    }
+    /*userEmail: "",
     userPass: "",
     methods: {
         envoyer: function() {
             alert('L\'utilisateur ' + this.userEmail + ' s\'est connecté avec le mot de passe : ' + this.userPass)
         }
-    }
+    }*/
 }
 
 </script>
