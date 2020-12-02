@@ -56,12 +56,11 @@ export default {
                 password: this.password,
                 job: this.job
             };
+            const header = {
+                'Content-type': 'application/json'
+            };
             console.log(newUser);
-            axios.post(this.url, {
-                header: {
-                    'Content-type': 'application/json'
-                }
-            }, newUser)
+            axios.post(this.url, newUser, { header })
                 .then(response => {
                     console.log(response);
                 })

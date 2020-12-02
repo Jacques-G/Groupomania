@@ -7,7 +7,7 @@
 </template>
 
 <script>
-export default { //Ajout pour test
+export default { 
   name: 'Banniere'
 }
 </script>

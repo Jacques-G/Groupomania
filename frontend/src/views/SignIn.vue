@@ -21,6 +21,7 @@
 
 <script>
 import Banniere from "@/components/Banniere"
+import router from "../router/index"
 import axios from "axios"
 
 export default {
@@ -31,34 +32,39 @@ export default {
         return {
             userEmail: "",
             userPass: "",
-            url: "http://localhost:3000/api/auth/login"
+            url: "http://localhost:3000/api/auth/login",
+            
         }
     },
     methods: {
         envoyer: function() {
             const user = {
                 email: this.userEmail,
-                password:  this.userPass
+                password:  this.userPass,
+                
             };
-            const header = {
-                    'Content-type': 'application/json'
-            };
-            axios.post(this.url, user, { header })
+
+            axios.post(this.url, user, { header: {
+                'Content-type': 'application/json',
+                
+                } 
+            })
             .then(response => {
-                console.log(response)
+                console.log(sessionStorage) // Verification du sessionStorage vide
+                console.log(response.data); // Verification des données recus
+                let responseUser = response.data.userId;
+                let responseToken = response.data.token;
+                sessionStorage.setItem('user', JSON.stringify(responseUser)); //push de l'id dans la sessionStorage
+                sessionStorage.setItem('token', responseToken);
+                console.log(sessionStorage)
+                router.push({name: "wall"});
+            
             })
             .catch(error => {
                 console.log(error)
             })
         }
     }
-    /*userEmail: "",
-    userPass: "",
-    methods: {
-        envoyer: function() {
-            alert('L\'utilisateur ' + this.userEmail + ' s\'est connecté avec le mot de passe : ' + this.userPass)
-        }
-    }*/
 }
 
 </script>
