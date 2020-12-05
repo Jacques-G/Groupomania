@@ -43,7 +43,6 @@
     margin: 50px auto;
     padding: 10px 10px 0 10px;
     width: 750px;
-    height: 150px;
     border-radius: 10px;
     box-shadow: 10px 5px 5px grey;
     display: flex;
@@ -53,7 +52,7 @@
     & #usersMessage {
         width: 700px;
         height: auto;
-        margin: 0 auto;
+        margin: 25px auto;
     }
 }
 </style>
