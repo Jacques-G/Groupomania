@@ -2,47 +2,49 @@ const models = require('../models');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-exports.createMessage = (req, res, next) => { //Creation d'un message  
+exports.createMessage = (req, res, next) => {
+    
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+
+    //let attachmentURL =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
 
     let title = req.body.title;
     let content = req.body.content;
-    let attachmentURL =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    
+
     if (title === null || content === null) {
         res.status(400).json({ message: "Veuillez remplir tous les champs !"})
     }
     if (title.length <= 2 || content.length <= 4) {
         res.status(400).json({ message: "Votre titre doit contenir au moins 2 caractères et votre contenu 4"})
     }
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    const userId = decodedToken.userId;
-
     models.User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'job'],
-        where: {id: userId}
+        where: {id: userId},
+        attributes: ['id', 'firstName', 'lastName', 'job']
     })
-    .then((userFound) => { 
-        if(userFound) {
-            let userliked = [] ;
-            let like = 0; 
+    .then((userFound) => {
+        if (userFound) {
+            let attachmentURL =`${req.protocol}://${req.get('host')}/images/${req.file}`;
 
             models.Message.create({
                 title: title,
                 content: content,
-                attachment: attachmentURL,
                 likes: 0,
-                UserId: userId,
+                UserId: userFound.id,
+                attachment: attachmentURL
             })
             .then((newMessage) => {
-                 res.status(201).json({ newMessage, User: userFound })
+                res.status(201).json({ newMessage, User: userFound });
             })
-            .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }));
-        }else {
+            .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }))
+        } else {
             return res.status(400).json({ message: "Impossible de créer le message." });
         }
-        
     })
-    .catch(error => res.status(500).json({ error, message: "L'utilisateur n'a pas été trouvé, le message n'est donc pas envoyé" }));
+    .catch(error => res.status(500).json({ error, message: "L'utilisateur n'a pas été trouvé, le message n'est donc pas envoyé" }))
+
 };
 
 
