@@ -45,6 +45,7 @@ exports.createMessage = (req, res, next) => { //Creation d'un message
     .catch(error => res.status(500).json({ error, message: "L'utilisateur n'a pas été trouvé, le message n'est donc pas envoyé" }));
 };
 
+
 exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
     let fields = req.query.fields;
     let order = req.query.order;
