@@ -7,6 +7,9 @@
             <div id="userJob">
                 {{ usr.User.job }}
             </div>
+            <div id="titleMessage">
+                {{ usr.title }}
+            </div>
             <div id="userMessage">
                 {{ usr.content }}
             </div>
