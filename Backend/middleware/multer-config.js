@@ -1,14 +1,15 @@
 const multer = require('multer'); // necessaire pour ajout d'images
 
 const MIME_TYPES = {
-    'images/jpg': 'jpg',
-    'images/jpeg': 'jpg',
-    'images/png': 'png'
+    'image/jpg': 'jpg',
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': "gif"
 };
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, '/images');
+        callback(null, 'images');
     },
     filename: (req, file, callback) => {
         const name = file.originalname.split(' ').join('_');

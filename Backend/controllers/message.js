@@ -2,17 +2,21 @@ const models = require('../models');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
+
+
+
 exports.createMessage = (req, res, next) => {
     
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
 
-    //let attachmentURL =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    
 
     let title = req.body.title;
     let content = req.body.content;
-    
+    //let attachment = req.file.attachment;
+    //let attachment = req.image;
 
     if (title === null || content === null) {
         res.status(400).json({ message: "Veuillez remplir tous les champs !"})
@@ -26,24 +30,26 @@ exports.createMessage = (req, res, next) => {
     })
     .then((userFound) => {
         if (userFound) {
-            let attachmentURL =`${req.protocol}://${req.get('host')}/images/${req.file}`;
+
+            let attachment =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
 
             models.Message.create({
                 title: title,
                 content: content,
                 likes: 0,
                 UserId: userFound.id,
-                attachment: attachmentURL
+                attachment: attachment
             })
             .then((newMessage) => {
+                console.log(attachment);
                 res.status(201).json({ newMessage, User: userFound });
             })
             .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }))
         } else {
-            return res.status(400).json({ message: "Impossible de créer le message." });
+            return res.status(400).json({ message: "Utilisateur introuvable, impossible de créer le message." });
         }
     })
-    .catch(error => res.status(500).json({ error, message: "L'utilisateur n'a pas été trouvé, le message n'est donc pas envoyé" }))
+    .catch(error => res.status(500).json({ error, message: "Une erreur est survenue, le message n'est donc pas envoyé" }));
 
 };
 
