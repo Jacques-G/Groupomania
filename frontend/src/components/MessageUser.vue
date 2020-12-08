@@ -15,8 +15,8 @@
             </div>-->
             <div id="pushPicture">
                 <form enctype="multipart/form-data" method="post">
-                    <label for="avatar"></label>
-                    <input type="File" id="avatar" name="avatar" >
+                    <label for="imageMessage"></label>
+                    <input type="File" id="imageMessage" name="imageMessage" >
                 </form>
             </div>
             <div id="sendMessage">
@@ -55,20 +55,18 @@
         },
         methods: {
             sendNewMessage: function() {
-                let urlPicture = document.querySelector('#avatar')
-                let newMessageToSend = {
-                    title: this.titleMessage,
-                    content: this.userMessage,
-                    attachment: urlPicture.value,
-                    //attachment: this.urlPicture,
-                    likes: 0,
-                    UserId: this.userConnected
-                };
-                console.log(newMessageToSend)
+                let picture = document.querySelector('#imageMessage');
+                console.log(picture.files);
+                
+                let data = new FormData();
+                data.append('title', this.titleMessage);
+                data.append('content', this.userMessage);
+                data.append('attachment', picture.files[0]);
+                
                 let url = "http://localhost:3000/api/message/new";
 
-                axios.post(url, newMessageToSend, { headers: {
-                    'Content-type' : 'application/json',
+                axios.post(url, data, { headers: {
+                    'Content-type' : 'multipart/form-data',
                     'authorization': 'bearer ' + sessionStorage.getItem('token')
                 }})
                 .then(response => {
@@ -77,6 +75,8 @@
                 .catch(error => {
                     console.log(error);
                 })
+        
+                
             }
         }
     }
