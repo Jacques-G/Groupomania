@@ -6,17 +6,13 @@ const fs = require('fs');
 
 
 exports.createMessage = (req, res, next) => {
-    
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
 
-    
-
     let title = req.body.title;
     let content = req.body.content;
-    //let attachment = req.file.attachment;
-    //let attachment = req.image;
+    let attachment =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
 
     if (title === null || content === null) {
         res.status(400).json({ message: "Veuillez remplir tous les champs !"})
@@ -31,8 +27,6 @@ exports.createMessage = (req, res, next) => {
     .then((userFound) => {
         if (userFound) {
 
-            let attachment =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-
             models.Message.create({
                 title: title,
                 content: content,
@@ -41,7 +35,6 @@ exports.createMessage = (req, res, next) => {
                 attachment: attachment
             })
             .then((newMessage) => {
-                console.log(attachment);
                 res.status(201).json({ newMessage, User: userFound });
             })
             .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }))
@@ -49,7 +42,7 @@ exports.createMessage = (req, res, next) => {
             return res.status(400).json({ message: "Utilisateur introuvable, impossible de créer le message." });
         }
     })
-    .catch(error => res.status(500).json({ error, message: "Une erreur est survenue, le message n'est donc pas envoyé" }));
+    .catch(error => res.status(500).json({ 'error': error, message: "Une erreur est survenue, le message n'est donc pas envoyé" }));
 
 };
 
