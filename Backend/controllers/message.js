@@ -12,7 +12,7 @@ exports.createMessage = (req, res, next) => {
 
     let title = req.body.title;
     let content = req.body.content;
-    let attachment =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    //let attachment =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
 
     if (title === null || content === null) {
         res.status(400).json({ message: "Veuillez remplir tous les champs !"})
@@ -20,29 +20,56 @@ exports.createMessage = (req, res, next) => {
     if (title.length <= 2 || content.length <= 4) {
         res.status(400).json({ message: "Votre titre doit contenir au moins 2 caractères et votre contenu 4"})
     }
-    models.User.findOne({
-        where: {id: userId},
-        attributes: ['id', 'firstName', 'lastName', 'job']
-    })
-    .then((userFound) => {
-        if (userFound) {
+    if (req.file === null || req.file === undefined) {
+        models.User.findOne({
+            where: {id: userId},
+            attributes: ['id', 'firstName', 'lastName', 'job']
+        })
+        .then((userFound) => {
+            if (userFound) {
 
-            models.Message.create({
-                title: title,
-                content: content,
-                likes: 0,
-                UserId: userFound.id,
-                attachment: attachment
-            })
-            .then((newMessage) => {
-                res.status(201).json({ newMessage, User: userFound });
-            })
-            .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }))
-        } else {
-            return res.status(400).json({ message: "Utilisateur introuvable, impossible de créer le message." });
-        }
-    })
-    .catch(error => res.status(500).json({ 'error': error, message: "Une erreur est survenue, le message n'est donc pas envoyé" }));
+                models.Message.create({
+                    title: title,
+                    content: content,
+                    likes: 0,
+                    UserId: userFound.id,
+                    attachment: null
+                })
+                .then((newMessage) => {
+                    res.status(201).json({ newMessage, User: userFound });
+                })
+                .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }))
+            } else {
+                return res.status(400).json({ message: "Utilisateur introuvable, impossible de créer le message." });
+            }
+        })
+        .catch(error => res.status(500).json({ 'error': error, message: "Une erreur est survenue, le message n'est donc pas envoyé" }));
+    } else {
+        models.User.findOne({
+            where: {id: userId},
+            attributes: ['id', 'firstName', 'lastName', 'job']
+        })
+        .then((userFound) => {
+            if (userFound) {
+    
+                models.Message.create({
+                    title: title,
+                    content: content,
+                    likes: 0,
+                    UserId: userFound.id,
+                    attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                })
+                .then((newMessage) => {
+                    res.status(201).json({ newMessage, User: userFound });
+                })
+                .catch(error => res.status(500).json({ error, message: "Impossible de publier votre message." }))
+            } else {
+                return res.status(400).json({ message: "Utilisateur introuvable, impossible de créer le message." });
+            }
+        })
+        .catch(error => res.status(500).json({ 'error': error, message: "Une erreur est survenue, le message n'est donc pas envoyé" }));
+    }
+    
 
 };
 
