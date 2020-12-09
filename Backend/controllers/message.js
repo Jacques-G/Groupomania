@@ -83,7 +83,7 @@ exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
         attributes: (fields != '*' && fields != null) ? fields.split(',') : null,
         include: [{
             model: models.User,
-            attributes: ['firstName', 'lastName', 'job']
+            attributes: ['firstName', 'lastName', 'job', 'id']
         }]
     })
     .then((messages) => {
@@ -141,11 +141,22 @@ exports.deleteMessage = (req, res, next) => {
             .then((messageFound) => {
                 if (messageFound) {
                     if (messageFound.UserId === userId || userFound.isAdmin === 1) {
-                        models.Message.destroy({
-                            where: {id: req.params.id}
+                        if (messageFound.attachment === undefined || messageFound.attachment === null) {
+                            models.Message.destroy({
+                                where: {id: req.params.id}
+                            })
+                            .then(res.status(200).json({ message: "Message supprimé !"}))
+                            .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
+                        }else {
+                            const filename = messageFound.attachment.split('/images/')[1];
+                            fs.unlink(`images/${filename}`, () => {
+                            models.Message.destroy({
+                                where: {id: req.params.id}
+                            })
+                            .then(res.status(200).json({ message: "Message supprimé !"}))
+                            .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
                         })
-                        .then(res.status(200).json({ message: "Message supprimé !"}))
-                        .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
+                        }
                     } else {
                         res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
                     }
@@ -160,6 +171,46 @@ exports.deleteMessage = (req, res, next) => {
     })
     .catch(error => res.status(500).json({ error }));
 };
+/*exports.deleteMessage = (req, res, next) => {
+
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+    
+    models.User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'job'],
+        where: { id: userId }
+    })
+    .then((userFound) => {
+        if (userFound) {
+            models.Message.findOne({
+                where: {id: req.params.id}
+            })
+            .then((messageFound) => {
+                if (messageFound) {
+                    if (messageFound.UserId === userId || userFound.isAdmin === 1) {
+                        const filename = messageFound.attachment.split('/images/')[1];
+                        fs.unlink(`images/${filename}`, () => {
+                            models.Message.destroy({
+                            where: {id: req.params.id}
+                            })
+                            .then(res.status(200).json({ message: "Message supprimé !"}))
+                            .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
+                        })
+                    } else {
+                        res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
+                    }
+                } else {
+                    return res.status(400).json({ message: "Impossible de supprimer le message"});
+                }
+            })
+            .catch(error => res.status(500).json({ error, message: "Message introuvable"}));
+        } else {
+            return res.status(400).json({ message: "Utilisateur introuvable !"});
+        }
+    })
+    .catch(error => res.status(500).json({ error }));
+};*/
 
 
 exports.likeOrNot = (req, res, next) => {
