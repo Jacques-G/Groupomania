@@ -9,6 +9,7 @@
         </div>
         <button v-on:click="cart">Voir le panier</button>
     </div>
+    
 </template>
 
 <script>

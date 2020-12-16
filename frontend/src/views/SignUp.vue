@@ -33,6 +33,8 @@
 <script>
 import Banniere from "@/components/Banniere" //Import du composant Banniere
 import axios from "axios" // Import d'Axios pour requete HTTP
+import router from "../router/index"// Permet la redirection
+
 export default {
     components: {
         Banniere
@@ -62,6 +64,10 @@ export default {
             console.log(newUser);
             axios.post(this.url, newUser, { header })
                 .then(response => {
+                    alert('Votre compte à bien été créé. Veuillez vous connecter à présent.')
+                    setTimeout(function() {
+                        router.push({name: "signIn"})
+                    }, 2000)
                     console.log(response);
                 })
                 .catch((error) => console.log(error))
