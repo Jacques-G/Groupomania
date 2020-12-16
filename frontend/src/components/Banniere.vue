@@ -19,6 +19,8 @@ export default {
   figure{
     padding-bottom: -100px;
     border-bottom: solid 1px grey;
+    
+
     img{
       height: 200px;
     }

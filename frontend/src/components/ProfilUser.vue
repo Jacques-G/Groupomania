@@ -1,27 +1,24 @@
 s<template>
     <div id="container">
-        <p>Test d'insertion composant</p>
         <h1>Mon Profil utilisateur </h1>
         <div id="profil">
             <div id="title">
+                <p>Avatar :</p>
                 <p>Nom : </p>
                 <p>Prénom : </p>
                 <p>Email : </p>
                 <p>Poste occupé :</p>
             </div>
             <div id="user">
-                <p>{{ user.lastName }}</p>
-                <p>{{ user.firstName }}</p>
-                <div id="modifyEmail">
-                    <p>{{ user.email }}</p>
-                   <transition name="t">
-                        <div v-if="!modifyEmail" id="inputEmail">
-                            <input v-model="email1" id="email1" type="text" placeholder="Saisissez votre nouvelle adresse email">
-                            <input v-model="email2" id="email2" type="text" placeholder="Confirmez votre nouvelle adresse email">
-                            <button type="submit" v-on:click="sendNewEmail">Valider</button>
+                <p> {{ user.attachment }}</p>
+                <transition name="t">
+                        <div v-if="!modifyJob" id="inputAvatar">
+                            <input id="avatar" type="file" placeholder="Selectionner une photo de profil">
                         </div>
                    </transition>
-                </div>
+                <p>{{ user.lastName }}</p>
+                <p>{{ user.firstName }}</p>
+                <p>{{ user.email }}</p>
                 <div id="modifyJob">
                     <p>{{ user.job }}</p>
                     <transition name="t">
@@ -36,10 +33,6 @@ s<template>
             <div id="action">
                 <p>Ne peux être modifier</p>
                 <p>Ne peux être modifier</p>
-                <button type="submit">
-                    <span v-if="modifyEmail">Modifer</span>
-                    <span v-else>Annuler</span>
-                </button>
                 <button v-on:click="modifyJob=!modifyJob" type="submit">
                     <span v-if="modifyJob">Modifier</span>
                     <span v-else>Annuler</span>
@@ -64,7 +57,7 @@ export default {
             job1: "",
             job2: "",
             user: {},
-            modifyEmail: true,
+            modifyAvatar: true,
             modifyJob: true,
             userConnected: JSON.parse(sessionStorage.getItem('user'))
         }
@@ -87,36 +80,75 @@ export default {
         sendNewJob: function() {
             let url = "http://localhost:3000/api/auth/user/ " + this.userConnected;
             
-            if (this.job1 === "" || this.job2 === "") {
+            const newAvatar = document.querySelector('#avatar');
+            if (newAvatar === null || newAvatar === undefined) {
+                if (this.job1 === "" || this.job2 === "") {
                 console.log('Veuillez remplir tous les champs');
-            } else if (this.job1 !== this.job2) {
-                console.log('Les 2 champs doivent correspondre')
-            } else {
-                const jobUser = {
-                job: this.job1
-                }
-                console.log(jobUser);
+                } else if (this.job1 !== this.job2) {
+                    console.log('Les 2 champs doivent correspondre')
+                } else {
 
-                axios.put(url, jobUser, { headers: {
-                    'Content-type': 'application/json',
-                    'Authorization' : 'bearer ' + sessionStorage.getItem('token')
-                }})
-                .then(response => {
-                    console.log(response.data);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+                    let data = new FormData();
+
+                    data.append('job', this.job1);
+                    data.append('attachment', null);
+                    
+                    axios.put(url, data, { headers: {
+                        'Content-type': 'multipart/form-data',
+                        'Authorization': 'bearer ' + sessionStorage.getItem('token')
+                        
+                    }})
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+                }
+            } else {
+                if (this.job1 === "" || this.job2 === "") {
+                console.log('Veuillez remplir tous les champs');
+                } else if (this.job1 !== this.job2) {
+                    console.log('Les 2 champs doivent correspondre')
+                } else {
+                    let data = new FormData();
+                    
+                    data.append('job', this.job1);
+                    data.append('attachment', newAvatar.files[0]);
+                    
+                    axios.put(url, data, { headers: {
+                        'Content-type': 'multipart/form-data',
+                        'Authorization': 'bearer ' + sessionStorage.getItem('token')
+                        
+                    }})
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+                }
             }
+            
+            
 
             
         },
         deleteUser: function() {
             let url = "http://localhost:3000/api/auth/user/" + this.userConnected;
             axios.delete(url, { headers : {
-                'authorization' : 'bearer ' + sessionStorage.getItem('token')
+                'Content-type': 'application/json',
+                'Authorization' : 'bearer ' + sessionStorage.getItem('token')
             }})
-            .then(() => {
+            .then(response => {
+                console.log(response);
                 sessionStorage.clear()
                 router.push({name: "Home"});
             })

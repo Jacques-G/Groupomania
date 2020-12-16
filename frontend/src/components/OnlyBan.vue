@@ -1,7 +1,7 @@
 <template>
      <div id="containerBann">
         <figure>
-            <img src="../assets/icon.png">
+            <router-link to="wall"><img src="../assets/icon.png"></router-link>
         </figure>
         <div id="compte">
             <router-link to="/"><button v-on:click="disconnected">Me déconnecter</button></router-link>
