@@ -83,7 +83,7 @@ exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
         attributes: (fields != '*' && fields != null) ? fields.split(',') : null,
         include: [{
             model: models.User,
-            attributes: ['firstName', 'lastName', 'job', 'id']
+            attributes: ['firstName', 'lastName', 'job', 'id', 'attachment']
         }]
     })
     .then((messages) => {
