@@ -1,41 +1,49 @@
 <template>
     <div id="containerAllMessages">
-        <div id="usersMessage" v-for="(usr, index) in messages" v-bind:key="index">
-            <div id="userName">
-                {{ usr.User.firstName }}  {{ usr.User.lastName }}
-            </div>
-            <div id="userJob">
-                {{ usr.User.job }}
-            </div>
-            <div id="titleMessage">
-                {{ usr.title }}
-            </div>
-            <div id="userMessage">
-                {{ usr.content }}
+        <div id="usersMessage" v-for="mess in messages" :key="mess.id">
+            <div class="userToMessage">
+                <img id="userPicture" v-bind:src="mess.User.attachment" alt="photo de profil">
+                <p class="user">{{mess.User.firstName}} {{mess.User.lastName}}</p>
+                <p class="job"><span>{{ mess.User.job }}</span></p>
+                <button type="submit">Options</button>
+            </div>  
+            <div class="message">
+                <p class="title"> {{ mess.title}}</p>
+                <figure class="pictureMessage">
+                    <img v-bind:src="mess.attachment">
+                </figure>
+                <p class="content">{{mess.content}}</p>
+
             </div>
         </div>
+        <p> Test d'insertion </p>
     </div>
 </template>
+
 <script>
-    import axios from "axios"
+    import axios from 'axios'
     export default {
         name: "AllMessages",
         data() {
             return {
-                messages: null
+                messages: [],
+                
             }
         },
         created: function() {
-            axios.get("http://localhost:3000/api/message/all", {headers: {
-                'authorization' : 'bearer ' + sessionStorage.getItem('token')
+            let url = "http://localhost:3000/api/message/all";
+            axios.get(url, {headers: {
+                'authorization': 'bearer ' + sessionStorage.getItem('token')
             }})
-                .then(message => {
-                    this.messages = message.data
-                    console.log(message)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+            .then(response => {
+                
+                let messagesBdd = response.data;
+                this.messages = messagesBdd;
+                console.log(response.data)
+            })
+            .catch(() => {
+                alert('Serveur offLine')
+            })
         }
     }
 </script>
@@ -56,6 +64,30 @@
         width: 700px;
         height: auto;
         margin: 25px auto;
+
+        & #userPicture {
+            width: 50px;
+        }
+    }
+    & .message {
+
+        & figure {
+            
+
+            & img {
+                width: 625px;
+            }
+        }
+    }
+    #pictureMessage {
+        width: 500px;
+        & img {
+            width: 200px;
+        }
+    }
+
+    & #idMessage {
+        display: none;
     }
 }
 </style>
