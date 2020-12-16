@@ -7,10 +7,10 @@ const multer = require('../middleware/multer-config');
 
 const messageCtrl = require('../controllers/message');
 
-router.post('/new', auth, multer, messageCtrl.createMessage);//Modif pour tester creation   //  Route et controller fonctionne. Modif de la partie 'attachment' mais les images ne sont pas enregistrer dans le dossier..
+router.post('/new', auth, multer, messageCtrl.createMessage); // Route et controller fonctionne.
 router.get('/all',  auth, messageCtrl.getAllMessage);   // Route et controller fonctionne.
-router.put('/:id', auth, messageCtrl.modifyMessage);    // Route et controller Fonctionne apres correction body --> params
-router.delete('/:id', auth, messageCtrl.deleteMessage); // Route et controller ok
+router.put('/:id', auth, multer, messageCtrl.modifyMessage);    // Route et controller Fonctionne apres correction body --> params
+router.delete('/:id', auth, messageCtrl.deleteMessage); // Route et controller fonctionne
 router.post('/:id/like', auth, messageCtrl.likeOrNot);  // A voir, si je garde
 
 module.exports = router;

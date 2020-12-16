@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken'); // Token de protection
 const bcrypt = require('bcrypt'); // Protection du mot de passe utilisateur
 const models = require('../models');
 
+const fs = require('fs');
+
 
 
 //CONSTANTES REGEX
@@ -54,6 +56,7 @@ exports.signup = (req, res, next) => { //Inscription au site
                     email: email,
                     password: bcryptedPassword,
                     job: job,
+                    attachment: null,
                     isAdmin: 0
                 })
                 .then(function(newUser) {
@@ -107,7 +110,7 @@ exports.login = (req, res, next) => { // Connexion à un compte existant
 exports.getProfile = (req, res, next) => { //Profil Utilisateur
 
     models.User.findOne({
-        attributes: ['firstName', 'lastName', 'email', 'job'],
+        attributes: ['firstName', 'lastName', 'email', 'job', 'attachment'],
         where: { id: req.params.id }
     })
     .then( User => {
@@ -121,13 +124,14 @@ exports.getProfile = (req, res, next) => { //Profil Utilisateur
 };
 exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisateur
     models.User.findOne({
-        attributes: ['job', 'id'],
+        attributes: ['job', 'attachment', 'id'],
         where: { id: req.params.id}
     })
     .then((userFound) => {
         if (userFound) {
             userFound.update({
-               job:  req.body.job
+               job:  req.body.job,
+               attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
             })
             .then(userFound => {
                 return res.status(200).json({ User: userFound, message: "Profil modifié !"})
@@ -140,7 +144,7 @@ exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisate
     .catch(error => res.status(500).json({ error, message: "Impossible de récupérer l'utilisateur"}));
 };
 
-exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateur
+/*exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateur
 
     models.User.findOne({
         where: { id: req.params.id}
@@ -158,4 +162,22 @@ exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateu
         }
     })
     .catch( error => res.status(500).json({ error, message: 'Impossible de supprimer le compte.'}));
-};
+};*/
+exports.deleteUser = (req, res, next) => { // A TESTER !
+    models.User.findOne({
+        where: { id: req.params.id}
+    }).then((userFoundForDelete) => {
+        if (userFoundForDelete) {
+            const filename = userFoundForDelete.attachment.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                userFoundForDelete.destroy({
+                    email: userFoundForDelete.email
+                })
+                .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+            })
+        } else {
+            return res.status(400).json({ message: "L'utilisateur n'a pas été trouvé, il ne peut être supprimé." })
+        }
+    })
+}

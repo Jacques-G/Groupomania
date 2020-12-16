@@ -97,29 +97,42 @@ exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
 
 };
 
-exports.modifyMessage = (req, res, next) => { //Modification d'un Message
-
+exports.modifyMessage =(req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
-
+    
     models.User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'job'],
-        where: {id: userId}
+        where: { id: userId }
     })
     .then((userFound) => {
-        if (userFound && userFound.id === userId) {
-            models.Message.update({
-                content: req.body.content,
-                attachment: `${req.protocol}://${req.get('host')}/images/${req.body.attachment}`
-            },
-            {where: {id: req.params.id}})
-            .then(res.status(200).json({ message: "Message Modifié !"}))
-            .catch(res.status(500).json({ message: "Impossible de modifier ce message."}));
-        }else {
-            return res.status(400).json({ message: "Erreur interne, vous ne pouvez modifier ce message."});
+        if (userFound) {
+            models.Message.findOne({
+                where: {id: req.params.id}
+            })
+            .then((messageFound) => {
+                if (messageFound) {
+                    if (messageFound.UserId === userId || userFound.isAdmin === 1) {
+    
+                        messageFound.update({
+                            title: req.body.title,
+                            content: req.body.content,
+                            attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                        })
+                        .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
+                        .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                    } else {
+                      return res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
+                    }
+                } else {
+                    return res.status(400).json({ message: "Impossible de supprimer le message"});
+                }
+            })
+            .catch(error => res.status(500).json({ error, message: "Message introuvable"}));
+        } else {
+            return res.status(400).json({ message: "Utilisateur introuvable !"});
         }
-
     })
     .catch(error => res.status(500).json({ error }));
 }
