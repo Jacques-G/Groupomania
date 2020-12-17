@@ -73,6 +73,31 @@ exports.createMessage = (req, res, next) => {
 
 };
 
+exports.getOneMessage = (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+    
+    models.User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'job'],
+        where: { id: userId }
+    })
+    .then((userFound) => {
+        if (userFound) {
+            models.Message.findOne({
+                where: {id: req.params.id},
+                attributes: ['title', 'content', 'attachment']
+            })
+            .then((message) => {
+                res.status(200).json({message, userFound});
+            })
+            .catch(error => res.status(500).json({ error }));
+        } else {
+            return res.status(404).json({ message: "Aucuns messages trouvés.."});
+        }
+    })
+    .catch(error => res.status(500).json({ error }));
+}
 
 exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
     let fields = req.query.fields;
