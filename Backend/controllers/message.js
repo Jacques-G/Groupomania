@@ -73,13 +73,13 @@ exports.createMessage = (req, res, next) => {
 
 };
 
-exports.getOneMessage = (req, res, next) => {
+exports.oneMessage = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
     
     models.User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'job'],
+        attributes: ['id', 'firstName', 'lastName', 'job', 'attachment'],
         where: { id: userId }
     })
     .then((userFound) => {
@@ -97,7 +97,7 @@ exports.getOneMessage = (req, res, next) => {
         }
     })
     .catch(error => res.status(500).json({ error }));
-}
+};
 
 exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
     let fields = req.query.fields;
@@ -122,6 +122,7 @@ exports.getAllMessage = (req, res, next) => { //Affichage de tous les messages
 
 };
 
+
 exports.modifyMessage =(req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
@@ -139,14 +140,43 @@ exports.modifyMessage =(req, res, next) => {
             .then((messageFound) => {
                 if (messageFound) {
                     if (messageFound.UserId === userId || userFound.isAdmin === 1) {
-    
-                        messageFound.update({
-                            title: req.body.title,
-                            content: req.body.content,
-                            attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-                        })
-                        .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
-                        .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                        if (messageFound.attachment === undefined || messageFound.attachment === null) {    
+                            if (req.file === null || req.file === undefined) {
+                                messageFound.update({                                                           
+                                    title: req.body.title,                                                      
+                                    content: req.body.content,                                                  
+                                    attachment: null                                                            
+                                })
+                                .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
+                                .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                            } else {
+                                messageFound.update({
+                                    title: req.body.title,
+                                    content: req.body.content,
+                                    attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                                })
+                                .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
+                                .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                            }
+                        } else {
+                            if (req.file === null || req.file === undefined) {
+                                messageFound.update({                                                           
+                                    title: req.body.title,                                                      
+                                    content: req.body.content,                                                  
+                                    attachment: null                                                            
+                                })
+                                .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
+                                .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                            } else {
+                                messageFound.update({
+                                    title: req.body.title,
+                                    content: req.body.content,
+                                    attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                                })
+                                .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
+                                .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                            }    
+                          }
                     } else {
                       return res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
                     }
