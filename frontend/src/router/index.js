@@ -30,6 +30,12 @@ const routes = [
     path: '/userProfil',
     name: 'userProfil',
     component: () => import(/* webpackChunkName: "about" */ '../views/UserProfil.vue')
+  },
+  {
+    path: '/singleMessage',
+    name: 'singleMessage',
+    component: () => import(/* webpackChunkName: "about" */ '../views/SingleMessage.vue')
+  
   }
   /*{
     path: '/about',
