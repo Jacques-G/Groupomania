@@ -127,13 +127,6 @@ export default {
                     .catch(error => {
                         console.log(error);
                     })
-
-                    .then(response => {
-                        console.log(response.data);
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    })
                 }
             }
             

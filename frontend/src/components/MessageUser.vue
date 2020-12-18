@@ -9,10 +9,6 @@
         <input type="texte" v-model="titleMessage" placeholder="Titre de votre Message">
         <textarea v-model="userMessage" placeholder="Saisissez votre commentaire ici" rows="4" ></textarea>
         <div id="possibility">
-           <!-- <div id="pushPicture">
-                <label for="avatar"></label>
-                <input type="File" id="avatar" name="avatar" >
-            </div>-->
             <div id="pushPicture">
                 <form enctype="multipart/form-data" method="post">
                     <label for="imageMessage"></label>
@@ -27,13 +23,13 @@
 </template>
 <script>
     import axios from "axios"
+
     export default {
         name: 'MessageUser',
         data() {
             return {
                 titleMessage: "",
                 userMessage: "",
-                //urlPicture: "", //Test
                 user: {},
                 userConnected: JSON.parse(sessionStorage.getItem('user')),
                 
@@ -70,14 +66,13 @@
                     'authorization': 'bearer ' + sessionStorage.getItem('token')
                 }})
                 .then(response => {
+                    window.location.reload();
                     console.log(response);
                 })
                 .catch(error => {
                     console.log(error);
-                })
-        
-                
-            }
+                }) 
+            },
         }
     }
 
