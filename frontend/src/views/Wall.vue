@@ -1,13 +1,12 @@
 <template>
     <div id="container">
-        <WallBan />
+        <wallBan />
         <div id="forMessageUser">
             <messageUser />
         </div>
         <div id="allMessages">
             <allMessages />
         </div>
-        <button v-on:click="cart">Voir le panier</button>
     </div>
     
 </template>
