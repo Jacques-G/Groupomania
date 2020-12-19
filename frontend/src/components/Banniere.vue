@@ -14,7 +14,7 @@ export default {
 
 <style lang="scss" scoped>
 .banniere{
-  
+  background-color: white;
   
   figure{
     padding-bottom: -100px;

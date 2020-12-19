@@ -7,22 +7,29 @@
             {{user.job}}
         </div>
         <input type="texte" v-model="titleMessage" placeholder="Titre de votre Message">
-        <textarea v-model="userMessage" placeholder="Saisissez votre commentaire ici" rows="4" ></textarea>
+        <textarea v-model="userMessage" placeholder="Saisissez votre commentaire ici" ></textarea>
         <div id="possibility">
             <div id="pushPicture">
-                <form enctype="multipart/form-data" method="post">
+                <form>
                     <label for="imageMessage"></label>
                     <input type="File" id="imageMessage" name="imageMessage" >
                 </form>
             </div>
             <div id="sendMessage">
-                <button type="submit" v-on:click="sendNewMessage">Envoyer</button>
+                <md-button class="md-raised md-primary" type="submit" v-on:click="sendNewMessage">Envoyer</md-button>
             </div>
         </div>
     </div>
 </template>
 <script>
     import axios from "axios"
+
+    import Vue from 'vue'
+    import {MdButton} from 'vue-material/dist/components'
+    import 'vue-material/dist/vue-material.min.css'
+    import 'vue-material/dist/theme/default.css'
+
+    Vue.use(MdButton)
 
     export default {
         name: 'MessageUser',
@@ -84,7 +91,7 @@
     margin: 0 auto;
     padding: 10px 10px 0 10px;
     width: 750px;
-    height: 150px;
+    //height: 150px;
     border-radius: 10px;
     box-shadow: 10px 5px 5px grey;
     display: flex;
@@ -99,12 +106,22 @@
         font-style: italic;
         margin: -5px 0 10px 0;
     }
+    & textarea {
+        margin-bottom: 15px;
+        border-radius: 10px ;
+        border: solid 2px grey;
+        //border: none;
+    }
     & #possibility {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        //text-align: right;
-        
+        margin-bottom: 10px;
+
+        & #pushPicture{
+   
+            margin: auto 0;
+        }
         & button {
             cursor: pointer;
         }

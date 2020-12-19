@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     
-    <router-view/>
+    <router-view/> <!--Appel du router principal-->
   </div>
 </template>
 
@@ -11,5 +11,7 @@
 </script>
 
 <style lang="scss">
-
+body {
+  background-color: white;
+}
 </style>

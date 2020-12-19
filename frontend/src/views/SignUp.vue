@@ -85,6 +85,9 @@ export default {
         width: 125px;
         flex-direction: column;
         margin: 30px 0;
+        & label {
+            padding-bottom: 3px;
+        }
     }
     .inputs{
         display: flex;
@@ -93,6 +96,7 @@ export default {
     }
 }
 button{
+    cursor: pointer;
     display: flex;
     justify-content: center;
     margin: auto;

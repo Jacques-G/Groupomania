@@ -4,20 +4,46 @@
             <img src="../assets/icon.png">
         </figure>
         <div id="compte">
-            
-            <router-link to="/userProfil"><!--<button>Mon Compte</button>--><img v-bind:src= "avatarUrl" alt="photo de profil"></router-link>
-            <router-link to="/"><button v-on:click="disconnected">Me déconnecter</button></router-link>
+            <div id="images">
+                <router-link to="/userProfil">
+                    <div v-if="avatarUrl === null">
+                        <md-avatar>
+                            <img id="noneProfil" class="imageProfil" src="@/assets/users-solid.svg/"  alt="photo de profil">
+                        </md-avatar>
+                    </div>
+                    <div v-else>
+                        <md-avatar>
+                            <img class="imageProfil" v-bind:src= "avatarUrl" alt="photo de profil">
+                        </md-avatar>
+                    </div>
+                </router-link>
+            </div>
+            <!--<router-link to="/"><button v-on:click="disconnected">Me déconnecter</button></router-link>-->
+            <router-link to="/">
+                <md-avatar class="logDisconnect">
+                    <img src="@/assets/sign-out-alt-solid.svg" v-on:click="disconnected">
+                </md-avatar>  
+            </router-link>
         </div>
     </div>
 </template>
 
 <script>
     import axios from "axios"
+
+    import Vue from 'vue'
+    import {MdAvatar} from 'vue-material/dist/components'
+    import 'vue-material/dist/vue-material.min.css'
+    import 'vue-material/dist/theme/default.css'
+
+    Vue.use(MdAvatar)
+
     export default {
         name: "WallBan",
         data() {
             return {
                 avatarUrl: "",
+
                 userConnected: JSON.parse(sessionStorage.getItem('user'))
             }
         },
@@ -53,27 +79,24 @@
   
 
     & figure {
-        
+
         & img {
             width: 100px;
         }
     }
-    & div {
+    & #compte {
 
         display: flex;
         flex-direction: row;
         position: absolute;
+        padding-right: 50px;
         bottom: 10px;
         right: 0;
+
+        & .logDisconnect{
+            margin-left: 20px;
+        }
         
-        & img {
-            width: 100px;
-        }
-        & button {
-            margin-right: 10px;
-            width: 150px;
-            cursor: pointer;
-        }
     }
 }
 </style>

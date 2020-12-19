@@ -20,8 +20,10 @@
 </template>
 
 <script>
+
 import Banniere from "@/components/Banniere"
 import router from "../router/index"
+
 import axios from "axios"
 
 export default {
@@ -70,6 +72,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+body{
+    background-color: white;
+}
 #form{
     display: flex;
     justify-content: center;
@@ -87,6 +92,7 @@ export default {
     }
 }
 button{
+    cursor: pointer;
     display: flex;
     justify-content: center;
     margin: auto;

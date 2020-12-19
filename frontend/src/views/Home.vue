@@ -25,6 +25,7 @@
   width: 100vw;
   margin: 0;
   padding: 0;
+  
 }
 .acc{
   //margin-top: 50vh;
@@ -34,6 +35,7 @@
   justify-content: space-between;  
   text-align: center;
   font-size: 30px;
+  background-color: white;
   figure{
     
     img{
@@ -58,6 +60,11 @@
       width: 200px;
       margin: 0 50px;
       font-size: 20px;
+      transform: scale(1);
+      transition: transform 400ms;
+      &:hover {
+        transform: scale(1.2);
+      }
       &:target, :active, :focus {
         color: black;
       }
