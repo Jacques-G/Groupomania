@@ -52,18 +52,16 @@ export default {
                 } 
             })
             .then(response => {
-                console.log(sessionStorage) // Verification du sessionStorage vide
-                console.log(response.data); // Verification des données recus
                 let responseUser = response.data.userId;
                 let responseToken = response.data.token;
                 sessionStorage.setItem('user', JSON.stringify(responseUser)); //push de l'id dans la sessionStorage
                 sessionStorage.setItem('token', responseToken);
-                console.log(sessionStorage)
                 router.push({name: "wall"});
             
             })
             .catch(error => {
-                console.log(error)
+                alert(error)
+                
             })
         }
     }

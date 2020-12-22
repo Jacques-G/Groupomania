@@ -61,16 +61,14 @@ export default {
             const header = {
                 'Content-type': 'application/json'
             };
-            console.log(newUser);
             axios.post(this.url, newUser, { header })
-                .then(response => {
+                .then(() => {
                     alert('Votre compte à bien été créé. Veuillez vous connecter à présent.')
                     setTimeout(function() {
                         router.push({name: "signIn"})
-                    }, 2000)
-                    console.log(response);
+                    }, 1000)
                 })
-                .catch((error) => console.log(error))
+                .catch((error) => alert(error))
         }
     }
 }
