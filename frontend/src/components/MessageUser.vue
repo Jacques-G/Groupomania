@@ -6,7 +6,6 @@
         <div id="userJob">
             {{user.job}}
         </div>
-        <input type="texte" v-model="titleMessage" placeholder="Titre de votre Message">
         <textarea v-model="userMessage" placeholder="Saisissez votre commentaire ici" ></textarea>
         <div id="possibility">
             <div id="pushPicture">
@@ -35,7 +34,6 @@
         name: 'MessageUser',
         data() {
             return {
-                titleMessage: "",
                 userMessage: "",
                 user: {},
                 userConnected: JSON.parse(sessionStorage.getItem('user')),
@@ -53,7 +51,7 @@
                     this.user = userToConnected;
                 })
                 .catch(error => {
-                    console.log(error);
+                    alert(error);
                 })   
         },
         methods: {
@@ -62,7 +60,6 @@
                 console.log(picture.files);
                 
                 let data = new FormData();
-                data.append('title', this.titleMessage);
                 data.append('content', this.userMessage);
                 data.append('attachment', picture.files[0]);
                 
@@ -72,12 +69,12 @@
                     'Content-type' : 'multipart/form-data',
                     'authorization': 'bearer ' + sessionStorage.getItem('token')
                 }})
-                .then(response => {
+                .then(() => {
                     window.location.reload();
-                    console.log(response);
+                    
                 })
                 .catch(error => {
-                    console.log(error);
+                    alert(error);
                 }) 
             },
         }

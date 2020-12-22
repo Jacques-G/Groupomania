@@ -1,21 +1,32 @@
 s<template>
     <div id="container">
-        <h1>Mon Profil utilisateur </h1>
+        <div id="pageUser">
+            <figure>
+                <img src="@/assets/users-solid.svg">
+            </figure>
+            <h1>Mon Profil utilisateur </h1>
+        </div>
         <div id="profil">
             <div id="title">
                 <p>Avatar :</p>
+                <transition name="t">
+                    <div v-if="!modifyJob" id="inputAvatar">
+                        <p>Nouvel Avatar :</p>
+                    </div>
+                </transition>
                 <p>Nom : </p>
                 <p>Prénom : </p>
                 <p>Email : </p>
                 <p>Poste occupé :</p>
             </div>
             <div id="user">
-                <p> {{ user.attachment }}</p>
+                <p v-if="user.attachment !== null"> {{ user.attachment }}</p>
+                <p v-else>Pas de photo de profil</p>
                 <transition name="t">
-                        <div v-if="!modifyJob" id="inputAvatar">
-                            <input id="avatar" type="file" placeholder="Selectionner une photo de profil">
-                        </div>
-                   </transition>
+                    <div v-if="!modifyJob" id="inputAvatar">
+                        <input id="avatar" type="file" placeholder="Selectionner une photo de profil">
+                    </div>
+                </transition>
                 <p>{{ user.lastName }}</p>
                 <p>{{ user.firstName }}</p>
                 <p>{{ user.email }}</p>
@@ -25,28 +36,34 @@ s<template>
                         <div v-if="!modifyJob" id="inputJob">
                             <input v-model="job1" id="job1" type="text" placeholder="Saisissez votre nouveau poste">
                             <input v-model="job2" id="job2" type="text" placeholder="Confirmer votre nouveau poste">
-                            <button type="submit" v-on:click="sendNewJob">Valider</button>
+                            <p>Si vous ne souhaitez pas modifier votre Poste actuel, recopier le !</p>
+                            <md-button class="md-raised md-primary" type="submit" v-on:click="sendNewJob">Valider</md-button>
                         </div>
                     </transition>
                 </div>
             </div>
-            <div id="action">
-                <p>Ne peux être modifier</p>
-                <p>Ne peux être modifier</p>
-                <button v-on:click="modifyJob=!modifyJob" type="submit">
-                    <span v-if="modifyJob">Modifier</span>
-                    <span v-else>Annuler</span>
-                </button>
-            </div>
         </div>
-        <div id="delete">
-            <button type="submit" v-on:click="deleteUser">Supprimer mon compte</button>
+        <div id="action">
+            <md-button class="md-raised md-primary" v-on:click="modifyJob=!modifyJob" type="submit">
+                <span v-if="modifyJob">Modifier</span>
+                <span v-else>Annuler</span>
+            </md-button>
+            <div id="delete">
+                <md-button id="deleteButton" class="md-raised md-primary" type="submit" v-on:click="deleteUser">Supprimer mon compte</md-button>
+            </div>
         </div>
     </div>
 </template>
 <script>
 import axios from "axios"
 import router from "../router/index"
+
+import Vue from 'vue'
+import {MdButton} from 'vue-material/dist/components'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+Vue.use(MdButton)
 
 export default {
     name: "ProfilUser",
@@ -70,10 +87,9 @@ export default {
             .then(response => {
                 let userToConnected = response.data.User
                 this.user = userToConnected;
-                console.log(this.user)
             })
             .catch(error => {
-                console.log(error);
+                alert(error);
             })   
     },
     methods: {
@@ -98,11 +114,14 @@ export default {
                         'Authorization': 'bearer ' + sessionStorage.getItem('token')
                         
                     }})
-                    .then(response => {
-                        console.log(response.data);
+                    .then(() => {
+                        alert('Votre profil a bien été modifié. Vous allez être redirigé vers le mur.');
+                        setTimeout(function() {
+                            router.push({name: "wall"})
+                        }, 1000)
                     })
                     .catch(error => {
-                        console.log(error);
+                        alert(error, "Une erreur est survenue. Votre profil n'a pas été modifié...");
                     })
                 }
             } else {
@@ -121,11 +140,14 @@ export default {
                         'Authorization': 'bearer ' + sessionStorage.getItem('token')
                         
                     }})
-                    .then(response => {
-                        console.log(response.data);
+                    .then(() => {
+                        alert('Votre profil a bien été modifié. Vous allez être redirigé vers le mur.');
+                        setTimeout(function() {
+                            router.push({name: "wall"})
+                        }, 1000)
                     })
                     .catch(error => {
-                        console.log(error);
+                        alert(error, "Une erreur est survenue. Votre profil n'a pas été modifié...");
                     })
                 }
             }
@@ -143,10 +165,15 @@ export default {
             .then(response => {
                 console.log(response);
                 sessionStorage.clear()
-                router.push({name: "Home"});
+                alert("Votre profil a bien été supprimé.")
+                setTimeout(function() {
+                    router.push({name: "Home"});
+                }, 1000)
+               
             })
             .catch(error => {
                 console.log(error)
+                alert('Un petit problème empêche la suppression de votre compte...')
             })
         }
         
@@ -159,6 +186,58 @@ export default {
 }
 .t-enter-active, .t-leave-active {
     transition: opacity 2s;
+}
+
+#container {
+    
+    height: 70vh;
+    border: solid 1px black;
+    margin: 50px auto;
+    padding: 10px 10px 0 10px;
+    width: 750px;
+    border-radius: 10px;
+    box-shadow: 10px 5px 5px grey;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    & #pageUser {
+
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 30px;
+        & figure {
+
+            & img {
+                width: 100px;
+            }
+        }
+        & h1 {
+            margin: auto 0;
+        }
+    }
+
+    & #profil {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        
+        & #title {
+            font-weight: bold;
+        }
+    }
+
+    & #action {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        & #deleteButton {
+            background-color: red;
+        }
+    }
 }
 </style>
     

@@ -1,49 +1,62 @@
 <template>
     <div id="containerMessages">
-        <div id="userMessage"> <!--Boucle sur la base de donnée pour afficher ltous les messages-->
+        <div id="userMessage">
             <div class="userToMessage">
-                <img id="avatar" v-bind:src="avatarUrl" alt="photo de profil">
-                <p class="user">{{user.firstName}} {{user.lastName}}</p>
-                <p class="job"><span>{{user.job}}</span></p>
+                <div v-if="avatarUrl === null">
+                    <md-avatar>
+                        <img class="userPicture" src="@/assets/users-solid.svg/">
+                    </md-avatar>
+                </div>
+                <div v-else>
+                    <md-avatar>
+                        <img class="userPicture" v-bind:src="avatarUrl" alt="photo de profil">
+                    </md-avatar>
+                </div>
+                <div id="nameAndJobUser">
+                    <p class="user">{{user.firstName}} {{user.lastName}}</p>
+                    <p class="job"><span>{{user.job}}</span></p>
+                </div>
             </div>  
             <div class="message">
                 <div id="modifyMessage">
-                    <p class="title">{{message.title}}</p>
-                    <transition name="t">
-                        <div v-if="!modifyMessage" id="inputNewTitle">
-                            <input v-model="newTitle" id="title1" type="text" placeholder="Si vous ne souhaitez pas le modifier, copier le !">
-                        </div>
-                    </transition>
                     <figure class="pictureMessage" v-if="message.attachment !== null">
                         <img id="imageMessage" v-bind:src="imageUrl" alt="image">
                     </figure>
                     <transition name="t">
-                        <div v-if="!modifyMessage" id="inoutNewImage">
+                        <div v-if="!modifyMessage" id="inputNewImage">
                             <input type="file" id="image1">
                         </div>
                     </transition>
                     <p class="content">{{message.content}}</p>
                     <transition name="t">
                         <div v-if="!modifyMessage" id="inputNewContent">
-                            <textarea v-model="newContent" id="content1" type="text" placeholder="Si vous ne souhaitez pas le modifier, copier le !"></textarea>
-                            <button type="submit" v-on:click="sendNewMessage">Valider</button>
+                            <textarea v-model="newContent" id="content1" cols="75" placeholder="Si vous ne souhaitez pas le modifier, copier le !"></textarea>
+                            <md-button class="md-raised md-primary" type="submit" v-on:click="sendNewMessage">Valider</md-button>
                         </div>
                     </transition>
                 </div>
             </div>
         </div>
         <div id="button">
-            <button type="submit" v-on:click="modifyMessage=!modifyMessage">
+            <md-button class="md-raised md-primary" type="submit" v-on:click="modifyMessage=!modifyMessage">
                 <span v-if="modifyMessage">Modifier</span>
                 <span v-else>Annuler</span>
-            </button>
-            <button type="submit" v-on:click="deleteMessage">Supprimer</button>
+            </md-button>
+            <md-button class="md-raised md-primary" id="deleteButton" type="submit" v-on:click="deleteMessage">Supprimer</md-button>
         </div>
     </div>
 </template>
 <script>
     import axios from 'axios'
     import router from "../router/index"
+
+    import Vue from 'vue'
+    import {MdAvatar, MdButton} from 'vue-material/dist/components'
+    import 'vue-material/dist/vue-material.min.css'
+    import 'vue-material/dist/theme/default.css'
+
+    Vue.use(MdAvatar)
+    Vue.use(MdButton)
 
     export default {
        name: 'OneMessage',
@@ -55,7 +68,6 @@
                 avatarUrl: "",
                 imageUrl: "",
                 modifyMessage: true,
-                newTitle: "",
                 newContent: ""
             }
         },
@@ -91,7 +103,6 @@
                     if (newImage.files[0] === null || newImage.files[0] === undefined) {
                         let data = new FormData();
 
-                        data.append('title', this.newTitle);
                         data.append('content', this.newContent);
                         data.append('attachment', null);
 
@@ -111,7 +122,6 @@
                     } else {
                         let data = new FormData();
 
-                        data.append('title', this.newTitle);
                         data.append('content', this.newContent);
                         data.append('attachment', newImage.files[0])
 
@@ -133,7 +143,6 @@
                     if (newImage.files[0] === null || newImage.files[0] === undefined) {
                         let data = new FormData();
 
-                        data.append('title', this.newTitle);
                         data.append('content', this.newContent);
                         data.append('attachment', null);
 
@@ -153,7 +162,6 @@
                     } else {
                         let data = new FormData();
 
-                        data.append('title', this.newTitle);
                         data.append('content', this.newContent);
                         data.append('attachment', newImage.files[0])
 
@@ -188,7 +196,6 @@
                 .catch(() => {
                     alert('Vous ne pouvez supprimer le message...')
                 })
-                console.log(urlMessageForDelete);
             }
         }
     }
@@ -209,8 +216,28 @@
         width: 700px;
         height: auto;
         margin: 25px auto;
-        & #avatar {
-            width: 50px;
+
+        & .userToMessage{
+            display: flex;
+            flex-direction: row;
+            display: flex;
+            flex-direction: row;
+
+            & #nameAndJobUser {
+                margin: -10px 0 0 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                & .user {
+                    font-weight: bold;
+                }
+                    
+                & .job {
+                    margin-top: -20px;
+                    font-style: italic;
+                }
+            }
         }
     }
     & .message {
@@ -226,6 +253,11 @@
                 width: 625px;
             }
         }
+        & #inputNewContent {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
     }
     #pictureMessage {
         width: 500px;
@@ -235,6 +267,16 @@
     }
     & #idMessage {
         display: none;
+    }
+    & #button {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        & #deleteButton {
+            background-color: red;
+        }
     }
 }
 </style>

@@ -2,13 +2,32 @@
     <div id="containerAllMessages">
         <div id="usersMessage" v-for="mess in messages" :key="mess.id"> <!--Boucle sur la base de donnée pour afficher ltous les messages-->
             <div class="userToMessage">
-                <img id="userPicture" v-bind:src="mess.User.attachment" alt="photo de profil">
-                <p class="user">{{mess.User.firstName}} {{mess.User.lastName}}</p>
-                <p class="job"><span>{{ mess.User.job }}</span></p>
-                <button type="submit" v-on:click="select(mess.id)" v-if="userConnected === mess.User.id">Options</button> <!--Bouton pour pouvoir acceder aux options de modifications et suppressions du message si la personne connectée est bien celle qui à créer le message-->
+                <div id="avatarUser"> 
+                    <div v-if="mess.User.attachment === null">
+                        <md-avatar>
+                            <img class="userPicture" src="@/assets/users-solid.svg/">
+                        </md-avatar>
+                    </div>
+                    <div v-else>
+                        <md-avatar>
+                            <img class="userPicture" v-bind:src="mess.User.attachment" alt="photo de profil">
+                        </md-avatar>
+                    </div>
+                    <div id="nameAndJobUser">
+                        <p class="user">{{mess.User.firstName}} {{mess.User.lastName}}</p>
+                        <p class="job"><span>{{ mess.User.job }}</span></p>
+                    </div>
+                </div>
+                <!--<div id="options">
+                    <p> {{mess.updatedAt}}</p>
+                    <button type="submit" v-on:click="select(mess.id)" v-if="userConnected === mess.User.id">Options</button>--> <!--Bouton pour pouvoir acceder aux options de modifications et suppressions du message si la personne connectée est bien celle qui à créer le message-->
+                <!--</div>-->
+                <div id="options">
+                    <p> {{ mess.updatedAt }}</p>
+                    <img v-on:click="select(mess.id)" v-if="userConnected === mess.User.id" src="@/assets/cog-solid.svg">
+                </div>
             </div>  
             <div class="message">
-                <p class="title"> {{ mess.title}}</p>
                 <figure class="pictureMessage">
                     <img v-bind:src="mess.attachment">
                 </figure>
@@ -22,6 +41,13 @@
 <script>
     import axios from 'axios'
     import router from "../router/index"
+
+    import Vue from 'vue'
+    import {MdAvatar} from 'vue-material/dist/components'
+    import 'vue-material/dist/vue-material.min.css'
+    import 'vue-material/dist/theme/default.css'
+
+    Vue.use(MdAvatar)
 
     export default {
         name: "AllMessages",
@@ -40,7 +66,6 @@
                 
                 let messagesBdd = response.data;
                 this.messages = messagesBdd;
-                console.log(response.data)
             })
             .catch(() => {
                 alert('Serveur offLine')
@@ -64,16 +89,51 @@
     width: 750px;
     border-radius: 10px;
     box-shadow: 10px 5px 5px grey;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    
+    
     & #usersMessage {
         width: 700px;
         height: auto;
         margin: 25px auto;
-        & #userPicture {
-            width: 50px;
+        border-bottom: solid 1px black;
+        
+        & .userToMessage {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            display: flex;
+            flex-direction: row;
+            
+            & #avatarUser{
+                display: flex;
+                flex-direction: row;
+                
+                & #nameAndJobUser{
+                    margin: -20px 0 0 10px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+
+                    & .user {
+                        font-weight: bold;
+                    }
+                    
+                    & .job {
+                        margin-top: -20px;
+                        font-style: italic;
+                    }
+                }
+            }
+
+            & #options {
+                    text-align: right;
+                    & img{
+                        cursor: pointer;
+                        width: 25px;
+                    }
+                }
         }
+        
     }
     & .message {
         & figure {

@@ -4,11 +4,23 @@
             <router-link to="wall"><img src="../assets/icon.png"></router-link>
         </figure>
         <div id="compte">
-            <router-link to="/"><button v-on:click="disconnected">Me déconnecter</button></router-link>
+            <router-link to="/">
+                <md-avatar class="logDisconnect">
+                    <img src="@/assets/sign-out-alt-solid.svg" v-on:click="disconnected">
+                </md-avatar>  
+            </router-link>
         </div>
     </div>
 </template>
 <script>
+
+import Vue from 'vue'
+    import {MdAvatar} from 'vue-material/dist/components'
+    import 'vue-material/dist/vue-material.min.css'
+    import 'vue-material/dist/theme/default.css'
+
+    Vue.use(MdAvatar)
+
 export default {
     name: "OnlyBan",
     data() {
@@ -19,7 +31,6 @@ export default {
         methods: {
             disconnected: function() {
                 sessionStorage.clear('tokens')
-                console.log(sessionStorage)
             }
         }
 }
@@ -47,14 +58,7 @@ export default {
         flex-direction: row;
         position: absolute;
         bottom: 10px;
-        right: 0;
-        
-        
-        & button {
-            margin-right: 10px;
-            width: 150px;
-            cursor: pointer;
-        }
+        right: 20px;
     }
 }
 

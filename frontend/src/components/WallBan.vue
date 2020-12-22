@@ -18,7 +18,6 @@
                     </div>
                 </router-link>
             </div>
-            <!--<router-link to="/"><button v-on:click="disconnected">Me déconnecter</button></router-link>-->
             <router-link to="/">
                 <md-avatar class="logDisconnect">
                     <img src="@/assets/sign-out-alt-solid.svg" v-on:click="disconnected">
@@ -56,13 +55,12 @@
             this.avatarUrl = response.data.User.attachment;
         })
         .catch(error => {
-            console.log(error)
+            alert(error)
         })
         },
         methods: {
             disconnected: function() {
                 sessionStorage.clear('tokens')
-                console.log(sessionStorage)
             }
         }
     }
