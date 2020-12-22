@@ -7,6 +7,7 @@ const fs = require('fs');
 
 
 
+
 //CONSTANTES REGEX
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const pwRegex = /^(?=.*\d).{4,8}$/;
@@ -129,14 +130,55 @@ exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisate
     })
     .then((userFound) => {
         if (userFound) {
-            userFound.update({
+            if (userFound.attachment === undefined || userFound.attachment === null) {
+                if (req.file === undefined || req.file === null) {
+                    userFound.update({
+                        job:  req.body.job,
+                        attachment : null
+                     })
+                     .then(userFound => {
+                         return res.status(200).json({ User: userFound, message: "Profil modifié !"})
+                     })
+                     .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));
+                } else {
+                    userFound.update({
+                        job:  req.body.job,
+                        attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                     })
+                     .then(userFound => {
+                         return res.status(200).json({ User: userFound, message: "Profil modifié !"})
+                     })
+                     .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));
+                }
+            } else {
+                if (req.file === undefined || req.file === null) {
+                    userFound.update({
+                        job:  req.body.job,
+                        attachment : null
+                     })
+                     .then(userFound => {
+                         return res.status(200).json({ User: userFound, message: "Profil modifié !"})
+                     })
+                     .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));
+                } else {
+                    userFound.update({
+                        job:  req.body.job,
+                        attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                     })
+                     .then(userFound => {
+                         return res.status(200).json({ User: userFound, message: "Profil modifié !"})
+                     })
+                     .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));
+                }
+            }
+            /*userFound.update({
                job:  req.body.job,
                attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
             })
             .then(userFound => {
                 return res.status(200).json({ User: userFound, message: "Profil modifié !"})
             })
-            .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));
+            .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));*/
         } else {
             return res.status(400).json({ message: "Utilisateur introuvable."});
         }
@@ -144,40 +186,76 @@ exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisate
     .catch(error => res.status(500).json({ error, message: "Impossible de récupérer l'utilisateur"}));
 };
 
-/*exports.deleteUser = (req, res, next) => { // Suppression d'un compte utilisateur
-
+exports.deleteUser = (req, res, next) => {
     models.User.findOne({
         where: { id: req.params.id}
     })
     .then((userFoundForDelete) => {
-        if(userFoundForDelete) {
-            userFoundForDelete.destroy({
-                email: userFoundForDelete.email
-            })
-            .then(() => res.status(200).json({ message: 'Utilisateur supprimé !'}))
-            .catch( error => res.status(500).json({ error, message: "L'utilisateur n'a pas été supprimé."}));
-        }else {
-            return res.status(400).json({ message: "L'utilisateur n'a pas été trouvé, il ne peut être supprimé." });
-
-        }
-    })
-    .catch( error => res.status(500).json({ error, message: 'Impossible de supprimer le compte.'}));
-};*/
-exports.deleteUser = (req, res, next) => { // A TESTER !
-    models.User.findOne({
-        where: { id: req.params.id}
-    }).then((userFoundForDelete) => {
         if (userFoundForDelete) {
-            const filename = userFoundForDelete.attachment.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                userFoundForDelete.destroy({
-                    email: userFoundForDelete.email
-                })
-                .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
-                .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+            models.Message.findAll({
+                where: { UserId: userFoundForDelete.id }
             })
+            .then((messagesFound) => {
+                if (messagesFound) {
+                    console.log(messagesFound);// ok Recupere bien les messages
+                    if (messagesFound.attachment === undefined || messagesFound.attachment === null) {
+                        models.Message.destroy({
+                            where: {UserId: userFoundForDelete.id}
+                        })
+                        .then(() => {
+                            if (userFoundForDelete.attachment === undefined || userFoundForDelete.attachment === null) {
+                                userFoundForDelete.destroy({
+                                    where: {id: req.params.id}
+                                })
+                                .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                            } else {
+                                const filename = userFoundForDelete.attachment.split('/images/')[1];
+                                fs.unlink(`images/${filename}`, () => {
+                                    userFoundForDelete.destroy({
+                                        email: userFoundForDelete.email
+                                    })
+                                    .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                    .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                                })
+                            }
+                        })
+                        .catch(error => res.status(500).json({ error, message: " Impossible de supprimer l'utilisateur'"}));
+                    }else {
+                        const filename = messageFound.attachment.split('/images/')[1];
+                        fs.unlink(`images/${filename}`, () => {
+                        models.Message.destroy({
+                            where: {UserId: userFoundForDelete.id}
+                        })
+                        .then(() => {
+                            if (userFoundForDelete.attachment === undefined || userFoundForDelete.attachment === null) {
+                                userFoundForDelete.destroy({
+                                    where: {id: req.params.id}
+                                })
+                                .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                            } else {
+                                const filename = userFoundForDelete.attachment.split('/images/')[1];
+                                fs.unlink(`images/${filename}`, () => {
+                                    userFoundForDelete.destroy({
+                                        email: userFoundForDelete.email
+                                    })
+                                    .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                    .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                                })
+                            }
+                        })
+                        .catch(error => res.status(500).json({ error, message: " Impossible de supprimer l'utilisateur"}));
+                        })
+                    }
+                } else {
+                    return res.status(400).json({ message: "Vous ne pouvez pas supprimé l'utilisateur" });
+                } 
+            })
+            .catch(error => res.status(500).json({error, message: "Impossible de récupérer les messages de l'utilisateur, il ne peut être supprimé..."}))
         } else {
-            return res.status(400).json({ message: "L'utilisateur n'a pas été trouvé, il ne peut être supprimé." })
+            return res.status(400).json({ message: "Vous ne pouvez pas supprimé l'utilisateur" });
         }
     })
+    .catch(error => res.status(500).json({error, message: "Impossible de récupérer l'utilisateur, il ne peut être supprimé..."}))
 }

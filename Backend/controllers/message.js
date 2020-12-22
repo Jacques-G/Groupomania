@@ -10,15 +10,13 @@ exports.createMessage = (req, res, next) => {
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
 
-    let title = req.body.title;
     let content = req.body.content;
-    //let attachment =`${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
 
-    if (title === null || content === null) {
+    if (content === null) {
         res.status(400).json({ message: "Veuillez remplir tous les champs !"})
     }
-    if (title.length <= 2 || content.length <= 4) {
-        res.status(400).json({ message: "Votre titre doit contenir au moins 2 caractères et votre contenu 4"})
+    if (content.length <= 4) {
+        res.status(400).json({ message: "Votre contenu doit contenir au moins 4 caractères"})
     }
     if (req.file === null || req.file === undefined) {
         models.User.findOne({
@@ -29,7 +27,6 @@ exports.createMessage = (req, res, next) => {
             if (userFound) {
 
                 models.Message.create({
-                    title: title,
                     content: content,
                     likes: 0,
                     UserId: userFound.id,
@@ -53,7 +50,6 @@ exports.createMessage = (req, res, next) => {
             if (userFound) {
     
                 models.Message.create({
-                    title: title,
                     content: content,
                     likes: 0,
                     UserId: userFound.id,
@@ -86,7 +82,7 @@ exports.oneMessage = (req, res, next) => {
         if (userFound) {
             models.Message.findOne({
                 where: {id: req.params.id},
-                attributes: ['title', 'content', 'attachment']
+                attributes: ['content', 'attachment']
             })
             .then((message) => {
                 res.status(200).json({message, userFound});
@@ -142,8 +138,7 @@ exports.modifyMessage =(req, res, next) => {
                     if (messageFound.UserId === userId || userFound.isAdmin === 1) {
                         if (messageFound.attachment === undefined || messageFound.attachment === null) {    
                             if (req.file === null || req.file === undefined) {
-                                messageFound.update({                                                           
-                                    title: req.body.title,                                                      
+                                messageFound.update({                                                                                                             
                                     content: req.body.content,                                                  
                                     attachment: null                                                            
                                 })
@@ -151,7 +146,6 @@ exports.modifyMessage =(req, res, next) => {
                                 .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
                             } else {
                                 messageFound.update({
-                                    title: req.body.title,
                                     content: req.body.content,
                                     attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                                 })
@@ -160,8 +154,7 @@ exports.modifyMessage =(req, res, next) => {
                             }
                         } else {
                             if (req.file === null || req.file === undefined) {
-                                messageFound.update({                                                           
-                                    title: req.body.title,                                                      
+                                messageFound.update({                                                                                                              
                                     content: req.body.content,                                                  
                                     attachment: null                                                            
                                 })
@@ -169,7 +162,6 @@ exports.modifyMessage =(req, res, next) => {
                                 .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
                             } else {
                                 messageFound.update({
-                                    title: req.body.title,
                                     content: req.body.content,
                                     attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                                 })
@@ -238,74 +230,4 @@ exports.deleteMessage = (req, res, next) => {
         }
     })
     .catch(error => res.status(500).json({ error }));
-};
-/*exports.deleteMessage = (req, res, next) => {
-
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    const userId = decodedToken.userId;
-    
-    models.User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'job'],
-        where: { id: userId }
-    })
-    .then((userFound) => {
-        if (userFound) {
-            models.Message.findOne({
-                where: {id: req.params.id}
-            })
-            .then((messageFound) => {
-                if (messageFound) {
-                    if (messageFound.UserId === userId || userFound.isAdmin === 1) {
-                        const filename = messageFound.attachment.split('/images/')[1];
-                        fs.unlink(`images/${filename}`, () => {
-                            models.Message.destroy({
-                            where: {id: req.params.id}
-                            })
-                            .then(res.status(200).json({ message: "Message supprimé !"}))
-                            .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
-                        })
-                    } else {
-                        res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
-                    }
-                } else {
-                    return res.status(400).json({ message: "Impossible de supprimer le message"});
-                }
-            })
-            .catch(error => res.status(500).json({ error, message: "Message introuvable"}));
-        } else {
-            return res.status(400).json({ message: "Utilisateur introuvable !"});
-        }
-    })
-    .catch(error => res.status(500).json({ error }));
-};*/
-
-
-exports.likeOrNot = (req, res, next) => {
-
-    if (req.body.like === 1) { // Si l'utilisateur Aime le Message
-        models.Message.update({
-            likes: req.body.likes++
-        }, {$push: { userliked: req.body.UserId}}, {
-            where: {id: req.params.id}
-        })
-        .then(() => res.status(200).json({ message: "Vous aimez ce Message"}))
-        .catch( error => res.status(500).json({ error, message: "Une erreur est survenue, le j'aime n'a pas été enregistré."}));
-    } else {
-        models.Message.find({
-            where: {id: req.params.id}
-        })
-        .then(MessageFound => {
-            if(MessageFound.userliked.include(req.body.userId)) {
-                models.Message.update({
-                    likes: -1
-                }, {$pull: { userliked: req.params.userId}})
-                .then(() => res.status(201).json({ message: "Un like de moins"}))
-                .catch( error => res.status(500).json({ error}));
-            } else {
-                return res.status(500).json({ message: "Une erreur est survenue, impossible de vérifier les j'aimes.."});
-            }
-        })
-        .catch(error => res.status(500).json({ error }));
-    }
 };

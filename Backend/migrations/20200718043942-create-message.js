@@ -8,10 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
       content: {
         allowNull: false,
         type: Sequelize.STRING
@@ -19,9 +15,6 @@ module.exports = {
       attachment: {
         allowNull: true,
         type: Sequelize.STRING
-      },
-      likes: {allowNull: false,
-        type: Sequelize.INTEGER
       },
       UserId: {
         allowNull: false,
