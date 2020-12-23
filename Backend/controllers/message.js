@@ -75,7 +75,7 @@ exports.oneMessage = (req, res, next) => {
     const userId = decodedToken.userId;
     
     models.User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'job', 'attachment'],
+        attributes: ['id', 'firstName', 'lastName', 'job', 'attachment', 'isAdmin'],
         where: { id: userId }
     })
     .then((userFound) => {
@@ -125,7 +125,7 @@ exports.modifyMessage =(req, res, next) => {
     const userId = decodedToken.userId;
     
     models.User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'job'],
+        attributes: ['id', 'firstName', 'lastName', 'job', 'isAdmin'],
         where: { id: userId }
     })
     .then((userFound) => {
@@ -135,7 +135,7 @@ exports.modifyMessage =(req, res, next) => {
             })
             .then((messageFound) => {
                 if (messageFound) {
-                    if (messageFound.UserId === userId || userFound.isAdmin === 1) {
+                    if (messageFound.UserId === userId || userFound.isAdmin === true) {
                         if (messageFound.attachment === undefined || messageFound.attachment === null) {    
                             if (req.file === null || req.file === undefined) {
                                 messageFound.update({                                                                                                             
@@ -190,7 +190,7 @@ exports.deleteMessage = (req, res, next) => {
     const userId = decodedToken.userId;
     
     models.User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'job'],
+        attributes: ['id', 'firstName', 'lastName', 'job', 'isAdmin'],
         where: { id: userId }
     })
     .then((userFound) => {
@@ -200,7 +200,7 @@ exports.deleteMessage = (req, res, next) => {
             })
             .then((messageFound) => {
                 if (messageFound) {
-                    if (messageFound.UserId === userId || userFound.isAdmin === 1) {
+                    if (messageFound.UserId === userId || userFound.isAdmin === true) {
                         if (messageFound.attachment === undefined || messageFound.attachment === null) {
                             models.Message.destroy({
                                 where: {id: req.params.id}

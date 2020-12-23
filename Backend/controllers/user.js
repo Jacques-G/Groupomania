@@ -111,7 +111,7 @@ exports.login = (req, res, next) => { // Connexion à un compte existant
 exports.getProfile = (req, res, next) => { //Profil Utilisateur
 
     models.User.findOne({
-        attributes: ['firstName', 'lastName', 'email', 'job', 'attachment'],
+        attributes: ['firstName', 'lastName', 'email', 'job', 'attachment', 'isAdmin'],
         where: { id: req.params.id }
     })
     .then( User => {
