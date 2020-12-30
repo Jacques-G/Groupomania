@@ -38,6 +38,7 @@ export default {
 <style lang="scss" scoped>
 
 #container {
+    background-color: #2d3f5e;
     width: 100vw;
 }
 </style>

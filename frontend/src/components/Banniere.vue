@@ -1,7 +1,7 @@
 <template>
   <div class="banniere">
     <figure>
-      <router-link to="/"><img src="../assets/icon-left-font.png"></router-link>
+      <router-link to="/"><img src="../assets/icon-left-font-monochrome-white.png"></router-link>
     </figure>
   </div>
 </template>
@@ -14,12 +14,12 @@ export default {
 
 <style lang="scss" scoped>
 .banniere{
-  background-color: white;
+  background-color: #2d3f5e;
   
   figure{
     padding-bottom: -100px;
-    border-bottom: solid 1px grey;
-    
+    border-bottom: solid 2px #d1515a;
+    margin: 0;
 
     img{
       height: 200px;

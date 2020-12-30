@@ -24,7 +24,10 @@
                     </figure>
                     <transition name="t">
                         <div v-if="!modifyMessage" id="inputNewImage">
-                            <input type="file" id="image1">
+                            <md-field id="mdFieldAvatar">
+                                <label for="image1">Selectionner une nouvelle image</label>
+                                <md-file id="image1"  accept="image/*" />
+                            </md-field>
                         </div>
                     </transition>
                     <p class="content">{{message.content}}</p>
@@ -51,12 +54,13 @@
     import router from "../router/index"
 
     import Vue from 'vue'
-    import {MdAvatar, MdButton} from 'vue-material/dist/components'
+    import {MdAvatar, MdButton, MdField} from 'vue-material/dist/components'
     import 'vue-material/dist/vue-material.min.css'
     import 'vue-material/dist/theme/default.css'
 
     Vue.use(MdAvatar)
     Vue.use(MdButton)
+    Vue.use(MdField)
 
     export default {
        name: 'OneMessage',
@@ -202,13 +206,13 @@
 </script>
 <style lang="scss" scoped>
 #containerMessages {
-    height: auto;
+    background-color: white;
     border: solid 1px black;
-    margin: 50px auto;
+    margin: 100px auto;
     padding: 10px 10px 0 10px;
-    width: 750px;
-    border-radius: 10px;
-    box-shadow: 10px 5px 5px grey;
+    width: 75%;
+    border-radius: 5px;
+    
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -257,6 +261,11 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+
+            & #content1{
+                border-radius: 10px;
+                border: solid 2px grey;
+            }
         }
     }
     #pictureMessage {

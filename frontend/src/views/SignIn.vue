@@ -1,21 +1,38 @@
 <template>
     <div>
-        <banniere />
-        <form id="form">
-            <div class="labels">
-                <label for="email">
-                    Email : 
-                </label>
-                <label for="password">
-                    Mot de passe : 
-                </label>
+        <div id="containerSignIn">
+            <banniere />
+            <div id="newFormSignIn">
+                <form class="md-layout">
+                    <div id="divForm">    
+                        <md-card-header>
+                            <div class="md-title">Me Connecter</div>
+                        </md-card-header>
+                        <md-card-content>
+                            <div class="md-layout md-gutter">
+                                <div class="md-layout-item md-small-size-100" >
+                                    <md-field>
+                                        <label for="email">Email</label>
+                                        <md-input type="email" name="email" id="email" autocomplete="email" v-model="userEmail" />
+                                    </md-field>
+                                </div>
+                            </div>
+                            <div class="md-layout md-gutter">
+                                <div class="md-layout-item md-small-size-100">
+                                    <md-field>
+                                        <label for="email">Mot de passe</label>
+                                        <md-input type="password" name="password" id="password" autocomplete="password" v-model="userPass" />
+                                    </md-field>
+                                </div>
+                            </div>
+                        </md-card-content>
+                        <md-card-actions>
+                            <md-button class="md-primary" v-on:click="envoyer">Se connecter </md-button>
+                        </md-card-actions>
+                    </div>
+                </form>
             </div>
-            <div class="inputs">
-                <input v-model="userEmail" type="text" id="email">
-                <input v-model="userPass" type="password" id="password">
-            </div>
-        </form>
-        <button v-on:click="envoyer">Se connecter</button>
+        </div>
     </div>
 </template>
 
@@ -26,7 +43,17 @@ import router from "../router/index"
 
 import axios from "axios"
 
+import Vue from 'vue'
+import {MdCard, MdField, MdButton} from 'vue-material/dist/components'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+Vue.use(MdCard)
+Vue.use(MdField)
+Vue.use(MdButton)
+
 export default {
+    name: 'LayoutHorizontalAlignment',
     components: {
         Banniere
     },
@@ -70,29 +97,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-body{
-    background-color: white;
-}
-#form{
-    display: flex;
-    justify-content: center;
-    margin-top: 100px;
-    .labels{
+#containerSignIn{
+    background-color: #2d3f5e;
+    height: 100vh;
+    
+    
+    & #newFormSignIn{
+
         display: flex;
-        width: 125px;
-        flex-direction: column;
-        margin: 30px 0;
+        
+        justify-content: center;
+        
+        & #divForm{
+        
+        background-color: white;
+        height: 300px;
+        margin-top: 100px;
+        width: 50vw;
+        border-radius: 2px;
+        }
     }
-    .inputs{
-        display: flex;
-        flex-direction: column;
-        margin: 30px 0;
-    }
+    
+    
+
 }
-button{
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    margin: auto;
-}
+
+
 </style>

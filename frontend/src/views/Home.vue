@@ -1,23 +1,31 @@
 <template>
-  <div class="home">
+  <div id="home">
     <section class="acc">
       <figure>
-        <img alt="Groupomania logo" src="../assets/icon-above-font.png">
+        <img alt="Groupomania logo" src="../assets/icon-left-font-monochrome-white.png">
       </figure>
       <div class="welcomeMess">
-        Bienvenue sur le réseau social de l'entreprise <br/>
-        <span>Groupomania</span>
+        Bienvenu sur notre réseau social d'entreprise
       </div>
       <div class="buttons">
-        <button><router-link to="/signIn" class="routerButton">Se connecter</router-link></button>
-        <button><router-link to="/signUp" class="routerButton">S'inscrire</router-link></button>
+        <md-button><router-link to="/signIn" id="buttonConnect" class="md-raised md-primary">Se connecter</router-link></md-button>
+        <md-button><router-link to="/signUp" id="buttonConnect" class="md-raised md-primary">S'inscrire</router-link></md-button>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-  
+import Vue from 'vue'
+
+import {MdButton} from 'vue-material/dist/components'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+Vue.use(MdButton)
+export default {
+  name: "Home"
+}
 </script>
 <style lang="scss" scoped>
 #home {
@@ -25,54 +33,45 @@
   width: 100vw;
   margin: 0;
   padding: 0;
+  background-color: #2d3f5e;
   
 }
 .acc{
-  //margin-top: 50vh;
-  //transform: translateY(-60%);
+  
   display: flex;
   flex-direction: column;
   justify-content: space-between;  
   text-align: center;
   font-size: 30px;
-  background-color: white;
   figure{
     
     img{
-      //margin-top: -100px;
-      height: 700px;
+      
+      height: 500px;
     }
   }
   .welcomeMess{
-    
-    span{
+    color: white;
+    margin-bottom: 50px;
+  }
+  & #span{
+      color: #af9b9c;
+      margin: -20px auto 20px auto;
       font-weight: bold;
     }
-  }
   .buttons{
-    margin: 50px 0;
+    padding: 20px 0;
+    background-color: #2d3f5e;
     
-    
-    button{
+    & #buttonConnect{
       border-radius: 6px;
-      color: black;
+      color: #d1515a;
       text-decoration: none;
       width: 200px;
       margin: 0 50px;
       font-size: 20px;
-      transform: scale(1);
-      transition: transform 400ms;
-      &:hover {
-        transform: scale(1.2);
-      }
-      &:target, :active, :focus {
-        color: black;
-      }
-      & .routerButton, .routerButton:active {
-        text-decoration: none;
-        color: black;
         
-      }
+      
     }
   }
 }

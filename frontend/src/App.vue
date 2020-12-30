@@ -12,6 +12,9 @@
 
 <style lang="scss">
 body {
-  background-color: white;
+  height: 100vh;
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 </style>

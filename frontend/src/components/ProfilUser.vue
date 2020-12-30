@@ -1,5 +1,5 @@
 s<template>
-    <div id="container">
+    <div id="containerProfil">
         <div id="pageUser">
             <figure>
                 <img src="@/assets/users-solid.svg">
@@ -23,8 +23,11 @@ s<template>
                 <p v-if="user.attachment !== null"> {{ user.attachment }}</p>
                 <p v-else>Pas de photo de profil</p>
                 <transition name="t">
-                    <div v-if="!modifyJob" id="inputAvatar">
-                        <input id="avatar" type="file" placeholder="Selectionner une photo de profil">
+                    <div v-if="!modifyJob" class="inputAvatar">
+                        <md-field id="mdFieldAvatar">
+                            <label for="avatar">Selectionner une photo de profil</label>
+                            <md-file id="avatar"  accept="image/*" />
+                        </md-field>
                     </div>
                 </transition>
                 <p>{{ user.lastName }}</p>
@@ -34,9 +37,15 @@ s<template>
                     <p>{{ user.job }}</p>
                     <transition name="t">
                         <div v-if="!modifyJob" id="inputJob">
-                            <input v-model="job1" id="job1" type="text" placeholder="Saisissez votre nouveau poste">
-                            <input v-model="job2" id="job2" type="text" placeholder="Confirmer votre nouveau poste">
-                            <p>Si vous ne souhaitez pas modifier votre Poste actuel, recopier le !</p>
+                            <md-field>
+                                <label for="job1">Saisissez votre nouveau poste"</label>
+                                <md-input type="text" name="job1" id="job1" autocomplete="job1" v-model="job1" />
+                            </md-field>
+                            <md-field>
+                                <label for="job2">Confirmez votre nouveau poste"</label>
+                                <md-input type="text" name="job2" id="job2" autocomplete="job2" v-model="job2" />
+                            </md-field>
+                            <p id="alert">Si vous ne souhaitez pas modifier votre Poste actuel, recopier le !</p>
                             <md-button class="md-raised md-primary" type="submit" v-on:click="sendNewJob">Valider</md-button>
                         </div>
                     </transition>
@@ -59,11 +68,12 @@ import axios from "axios"
 import router from "../router/index"
 
 import Vue from 'vue'
-import {MdButton} from 'vue-material/dist/components'
+import {MdButton, MdField} from 'vue-material/dist/components'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 
 Vue.use(MdButton)
+Vue.use(MdField)
 
 export default {
     name: "ProfilUser",
@@ -188,22 +198,20 @@ export default {
     transition: opacity 2s;
 }
 
-#container {
+#containerProfil {
     
-    height: 70vh;
+    background-color: white;
     border: solid 1px black;
     margin: 50px auto;
     padding: 10px 10px 0 10px;
-    width: 750px;
-    border-radius: 10px;
-    box-shadow: 10px 5px 5px grey;
-    position: relative;
+    width: 75%;
+    height: 80%;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
 
     & #pageUser {
-
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -226,6 +234,31 @@ export default {
         
         & #title {
             font-weight: bold;
+        }
+
+        & #user {
+
+            & .inputAvatar {
+                margin-top: 0;
+
+                & #mdFieldAvatar{
+                    margin-top: -20px;
+                    margin-bottom: -10px;
+                }
+                & #avatar {
+                    margin-top: 0;
+                }
+            }
+
+            & #modifyJob {
+                
+                & #inputJob{
+
+                    & #alert{
+                        font-style: italic;
+                    }
+                }
+            }
         }
     }
 

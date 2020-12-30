@@ -1,33 +1,60 @@
 <template>
-    <div>
+    <div id="containerSignUp">
         <banniere /><!--Appel du composant Banniere pour affichage-->
-        <form id="form">
-            <div class="labels">
-                <label for="firstName">
-                    Prénom : 
-                </label>
-                <label for="lastName">
-                    Nom :  
-                </label>
-                <label for="email">
-                    Email : 
-                </label>
-                <label for="password">
-                    Mot de passe : 
-                </label>
-                <label for="job">
-                    Emploi : 
-                </label>
-            </div>
-            <div class="inputs">
-                <input v-model="firstName" type="text" id="firstName">
-                <input v-model="lastName" type="text" id="lastName">
-                <input v-model="email" type="text" id="email">
-                <input v-model="password" type="password" id="password">
-                <input v-model="job" type="text" id="job">
-            </div>
-        </form>
-        <button type="submit" v-on:click="envoyer">S'inscrire</button>
+        <div id="newForm">
+            <form class="md-layout">
+                <div id="idForm">    
+                    <md-card-header>
+                        <div class="md-title">M'inscrire</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-small-size-100" >
+                                <md-field>
+                                    <label for="firstName">Prénom</label>
+                                    <md-input type="firstName" name="firstName" id="firstName" autocomplete="firstName" v-model="firstName" />
+                                </md-field>
+                            </div>
+                        </div>
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-small-size-100" >
+                                <md-field>
+                                    <label for="lastName">Nom</label>
+                                    <md-input type="lastName" name="lastName" id="lastName" autocomplete="lastName" v-model="lastName" />
+                                </md-field>
+                            </div>
+                        </div>
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-small-size-100" >
+                                <md-field>
+                                    <label for="email">Email</label>
+                                    <md-input type="email" name="email" id="email" autocomplete="email" v-model="email" />
+                                </md-field>
+                            </div>
+                        </div>
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-small-size-100" >
+                                <md-field>
+                                    <label for="job">Emploi</label>
+                                    <md-input type="job" name="job" id="job" autocomplete="job" v-model="job" />
+                                </md-field>
+                            </div>
+                        </div>
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-small-size-100">
+                                <md-field>
+                                    <label for="password">Mot de passe</label>
+                                    <md-input type="password" name="password" id="password" autocomplete="password" v-model="password" />
+                                </md-field>
+                            </div>
+                        </div>
+                    </md-card-content>
+                    <md-card-actions>
+                        <md-button class="md-primary" v-on:click="envoyer">S'inscrire </md-button>
+                    </md-card-actions>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 <script>
@@ -74,30 +101,23 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-#form{
-    display: flex;
-    justify-content: center;
-    margin-top: 100px;
-    .labels{
+
+#containerSignUp{
+    height: 100vh;
+    background-color: #2d3f5e;
+     & #newForm{
         display: flex;
-        width: 125px;
-        flex-direction: column;
-        margin: 30px 0;
-        & label {
-            padding-bottom: 3px;
-        }
+        justify-content: center;
+        margin-top: -20px;
+     }
+
+    & #idForm{
+        background-color: white;
+        
+        margin-top: 100px;
+        width: 50vw;
+        border-radius: 2px;
     }
-    .inputs{
-        display: flex;
-        flex-direction: column;
-        margin: 30px 0;
-    }
-}
-button{
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    margin: auto;
 }
 
 </style>

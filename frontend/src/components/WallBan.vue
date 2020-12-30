@@ -70,16 +70,18 @@
 
     display: flex;
     flex-direction: row;
+    background-color: white;
+    height: 75px;
     justify-content: space-between;
     position: relative;
-    border-bottom: solid 1px grey;
+    border-bottom: solid 2px #d1515a;
     margin-bottom: 30px;
   
 
     & figure {
 
         & img {
-            width: 100px;
+            width: 50px;
         }
     }
     & #compte {
