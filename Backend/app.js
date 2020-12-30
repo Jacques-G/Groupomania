@@ -6,6 +6,7 @@ const helmet = require('helmet'); // Plugin de protection pour diverses attaques
 
 const userRoutes = require('./routes/user'); // Déclaration du dossier des routes utilisateur
 const messageRoutes = require('./routes/message'); // Déclaration du dossier des routes messages
+const commentsRoutes = require('./routes/comments'); // Déclaration du dossier des routes comments
 
 const path = require('path');//nécessaire pour multer (importation des fichiers)
 
@@ -26,6 +27,7 @@ app.use(helmet());
 
 app.use('/api/message', messageRoutes);
 app.use('/api/auth', userRoutes);
+app.use('/api/comments', commentsRoutes);
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 

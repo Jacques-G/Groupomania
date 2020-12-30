@@ -159,21 +159,21 @@ exports.modifyMessage =(req, res, next) => {
                                     attachment: null                                                            
                                 })
                                 .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
-                                .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                                .catch(error => res.status(500).json({ error, message: " Impossible de modifier le message"}))
                             } else {
                                 messageFound.update({
                                     content: req.body.content,
                                     attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                                 })
                                 .then(newMessage => {res.status(200).json({ message: "Message modifié !", newMessage})})
-                                .catch(error => res.status(500).json({ error, message: " Impossible de modifié le message"}))
+                                .catch(error => res.status(500).json({ error, message: " Impossible de modifier le message"}))
                             }    
                           }
                     } else {
-                      return res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
+                      return res.status(403).json({ message: " Vous ne pouvez pas modifier le message"});
                     }
                 } else {
-                    return res.status(400).json({ message: "Impossible de supprimer le message"});
+                    return res.status(400).json({ message: "Impossible de modifier le message"});
                 }
             })
             .catch(error => res.status(500).json({ error, message: "Message introuvable"}));
@@ -182,7 +182,7 @@ exports.modifyMessage =(req, res, next) => {
         }
     })
     .catch(error => res.status(500).json({ error }));
-}
+};
 exports.deleteMessage = (req, res, next) => {
 
     const token = req.headers.authorization.split(' ')[1];
