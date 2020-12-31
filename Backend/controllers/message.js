@@ -79,10 +79,14 @@ exports.oneMessage = (req, res, next) => {
         where: { id: userId }
     })
     .then((userFound) => {
-        if (userFound) {
+        if (userFound || userFound.isAdmin === true) {
             models.Message.findOne({
                 where: {id: req.params.id},
-                attributes: ['content', 'attachment']
+                attributes: ['content', 'attachment'],
+                include: [{
+                    model: models.User,
+                    attributes: ['firstName', 'lastName', 'job', 'id', 'attachment']
+                }]
             })
             .then((message) => {
                 res.status(200).json({message, userFound});

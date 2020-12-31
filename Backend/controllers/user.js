@@ -171,14 +171,6 @@ exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisate
                      .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));
                 }
             }
-            /*userFound.update({
-               job:  req.body.job,
-               attachment : `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-            })
-            .then(userFound => {
-                return res.status(200).json({ User: userFound, message: "Profil modifié !"})
-            })
-            .catch(error => res.status(500).json({ error, message: "Impossible de modifié votre profil."}));*/
         } else {
             return res.status(400).json({ message: "Utilisateur introuvable."});
         }

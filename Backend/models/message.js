@@ -11,12 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Message.hasMany(models.Comments);
+  
       models.Message.belongsTo(models.User, {
         foreignKey: {
           allowNull: false
         }
-      })
+      });
+      models.Message.hasMany(models.Comments);
     }
   };
   Message.init({
