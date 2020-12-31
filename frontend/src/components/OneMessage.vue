@@ -41,11 +41,11 @@
             </div>
         </div>
         <div id="button">
-            <md-button class="md-raised md-primary" type="submit" v-on:click="modifyMessage=!modifyMessage">
+            <md-button class=" md-primary" type="submit" v-on:click="modifyMessage=!modifyMessage">
                 <span v-if="modifyMessage">Modifier</span>
                 <span v-else>Annuler</span>
             </md-button>
-            <md-button class="md-raised md-primary" id="deleteButton" type="submit" v-on:click="deleteMessage">Supprimer</md-button>
+            <md-button class=" md-primary" id="deleteButton" type="submit" v-on:click="deleteMessage">Supprimer</md-button>
         </div>
     </div>
 </template>
@@ -87,13 +87,14 @@
                 'Authorization': 'bearer ' + sessionStorage.getItem('token')
             }})
             .then((response) => {
-                let user = response.data.userFound;
+                let user = response.data.message.User;
                 this.user = user;
 
                 let message = response.data.message;
                 this.message = message;
-                this.avatarUrl = user.attachment;
+                this.avatarUrl = response.data.message.User.attachment;
                 this.imageUrl = message.attachment;
+            
             })
             .catch(() => {
                 alert('Vous ne pouvez accéder à cette page');
@@ -284,7 +285,7 @@
         margin-bottom: 20px;
 
         & #deleteButton {
-            background-color: red;
+            color: red;
         }
     }
 }

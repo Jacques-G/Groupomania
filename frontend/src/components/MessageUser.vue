@@ -15,7 +15,7 @@
                 </md-field>
             </div>
             <div id="sendMessage">
-                <md-button class="md-raised md-primary" type="submit" v-on:click="sendNewMessage">Envoyer</md-button>
+                <md-button class="md-primary" type="submit" v-on:click="sendNewMessage">Envoyer</md-button>
             </div>
         </div>
     </div>

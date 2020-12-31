@@ -129,7 +129,6 @@
                 }})
                 .then((allComments) => {
                     this.comments = allComments.data;
-                    console.log(this.comments);
                 })
                 .catch(error => console.log(error))
             })
@@ -145,6 +144,7 @@
             .then(response => {
                 let userToConnected = response.data.User
                 this.user = userToConnected;
+                console.log(this.user)
             })
             .catch(error => {
                 alert(error);
@@ -267,7 +267,7 @@
             justify-content: right;
 
             & .mdAvatar{
-                margin-right: 30px;
+                
 
                 & .avatarResponse {
                     width: 50px;

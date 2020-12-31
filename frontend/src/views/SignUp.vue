@@ -62,6 +62,15 @@ import Banniere from "@/components/Banniere" //Import du composant Banniere
 import axios from "axios" // Import d'Axios pour requete HTTP
 import router from "../router/index"// Permet la redirection
 
+import Vue from 'vue'
+import {MdCard, MdField, MdButton} from 'vue-material/dist/components'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+Vue.use(MdCard)
+Vue.use(MdField)
+Vue.use(MdButton)
+
 export default {
     components: {
         Banniere

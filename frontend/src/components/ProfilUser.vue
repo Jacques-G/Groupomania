@@ -46,19 +46,19 @@ s<template>
                                 <md-input type="text" name="job2" id="job2" autocomplete="job2" v-model="job2" />
                             </md-field>
                             <p id="alert">Si vous ne souhaitez pas modifier votre Poste actuel, recopier le !</p>
-                            <md-button class="md-raised md-primary" type="submit" v-on:click="sendNewJob">Valider</md-button>
+                            <md-button class="md-primary " type="submit" v-on:click="sendNewJob">Valider</md-button>
                         </div>
                     </transition>
                 </div>
             </div>
         </div>
         <div id="action">
-            <md-button class="md-raised md-primary" v-on:click="modifyJob=!modifyJob" type="submit">
+            <md-button class="md-primary" v-on:click="modifyJob=!modifyJob" type="submit">
                 <span v-if="modifyJob">Modifier</span>
                 <span v-else>Annuler</span>
             </md-button>
             <div id="delete">
-                <md-button id="deleteButton" class="md-raised md-primary" type="submit" v-on:click="deleteUser">Supprimer mon compte</md-button>
+                <md-button id="deleteButton" class="md-primary" type="submit" v-on:click="deleteUser">Supprimer mon compte</md-button>
             </div>
         </div>
     </div>
@@ -268,7 +268,7 @@ export default {
         justify-content: space-between;
 
         & #deleteButton {
-            background-color: red;
+            color: red;
         }
     }
 }
