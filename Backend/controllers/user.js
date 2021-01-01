@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt'); // Protection du mot de passe utilisateur
 const models = require('../models');
 
 const fs = require('fs');
+const { measureMemory } = require('vm');
 
 
 
@@ -178,7 +179,7 @@ exports.updateProfil = (req, res, next) => { // Modification du Profil Utilisate
     .catch(error => res.status(500).json({ error, message: "Impossible de récupérer l'utilisateur"}));
 };
 
-exports.deleteUser = (req, res, next) => {
+/*exports.deleteUser = (req, res, next) => {
     models.User.findOne({
         where: { id: req.params.id}
     })
@@ -250,4 +251,111 @@ exports.deleteUser = (req, res, next) => {
         }
     })
     .catch(error => res.status(500).json({error, message: "Impossible de récupérer l'utilisateur, il ne peut être supprimé..."}))
+}*/
+
+exports.deleteUser = (req, res, next) => {
+    models.User.findOne({
+        where: { id: req.params.id}
+    })
+    .then((userFound) => {
+        if (userFound) {
+            models.Message.findAll({
+                where: {UserId: userFound.id}
+            })
+            .then((messagesFound) => {
+               if (messagesFound) {
+
+                models.Comments.findAll({
+                    where: {UserId: userFound.id}
+                })
+                .then((commentsFound) => {
+                    if (commentsFound) {
+                        let fields = req.query.fields;
+                        let order = req.query.order;
+                        models.Comments.findAll({
+                            order: [(order != null) ? order.split(':') : ['createdAt', 'DESC']],
+                            attributes: (fields != '*' && fields != null) ? fields.split(',') : null,
+                            where: {MessageId: messagesFound.id}
+                        })
+                        .then((otherComments) => {
+                            models.Comments.destroy({
+                                where: {MessageId: messagesFound.id}
+                            })
+                            .then(() => {
+                                models.Comments.destroy({
+                                    where: {UserId: userFound.id}
+                                })
+                                .then(() => {
+                                    if (messagesFound.attachment === undefined || messagesFound.attachment === null) {
+                                        models.Message.destroy({
+                                            where: {UserId: userFound.id}
+                                        })
+                                        .then(() => {
+                                            if (userFound.attachment === undefined || userFound.attachment === null) {
+                                                userFound.destroy({
+                                                    where: {id: req.params.id}
+                                                })
+                                                .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                                .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                                            } else {
+                                                const filename = userFoundForDelete.attachment.split('/images/')[1];
+                                                fs.unlink(`images/${filename}`, () => {
+                                                    userFound.destroy({
+                                                        email: userFound.email
+                                                    })
+                                                    .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                                    .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                                                })
+                                            }
+                                        })
+                                        .catch(error => res.status(500).json({ error, message: " Impossible de supprimer l'utilisateur'"}));
+                                    }else {
+                                        const filename = messagesFound.attachment.split('/images/')[1];
+                                        fs.unlink(`images/${filename}`, () => {
+                                        models.Message.destroy({
+                                            where: {UserId: userFound.id}
+                                        })
+                                        .then(() => {
+                                            if (userFound.attachment === undefined || userFound.attachment === null) {
+                                                userFound.destroy({
+                                                    where: {id: req.params.id}
+                                                })
+                                                .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                                .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                                            } else {
+                                                const filename = userFound.attachment.split('/images/')[1];
+                                                fs.unlink(`images/${filename}`, () => {
+                                                    userFound.destroy({
+                                                        email: userFound.email
+                                                    })
+                                                    .then(() => res.status(200).json({message: 'Utilisateur supprimé'}))
+                                                    .catch(error => res.status(500).json({error, message: "L'utilisateur n'a pas été supprimé."}))
+                                                })
+                                            }
+                                        })
+                                        .catch(error => res.status(500).json({ error, message: " Impossible de supprimer l'utilisateur"}));
+                                        })
+                                    }
+                                })
+                                .catch(error => res.status(500).json({error, message: "Impossible de supprimer les Commentaires l'utilisateur concerné, il ne peut être supprimé..."}))
+                            })
+                            .catch(error => res.status(500).json({error, message: "Impossible de supprimer les Commentaires des autres utilisateurs sur les messages de l'utilisateur concerné, il ne peut être supprimé..."}));
+                        })
+                        .catch(error => res.status(500).json({error, message: "Impossible de récupérer les Commentaires des autres utilisateurs sur les messages de l'utilisateur concerné, il ne peut être supprimé..."}));
+                       } else {
+                        return res.status(400).json({ message: "Les commentaires de cet utilisateur n'ont pas été récupéré" });
+                       }
+
+                   })
+                   .catch(error => res.status(500).json({error, message: "Impossible de récupérer les Commentaires de l'utilisateur, il ne peut être supprimé..."}));
+               } else {
+                return res.status(400).json({ message: "Vous ne pouvez pas supprimé l'utilisateur" });
+               }
+            })
+            .catch(error => res.status(500).json({error, message: "Impossible de récupérer les messages de l'utilisateur, il ne peut être supprimé..."}));
+        } else {
+            return res.status(400).json({ message: "Vous ne pouvez pas supprimé l'utilisateur" });
+        }
+    })
+    .catch(error => res.status(500).json({error, message: "Impossible de récupérer l'utilisateur, il ne peut être supprimé..."}));
 }

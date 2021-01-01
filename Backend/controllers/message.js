@@ -82,7 +82,7 @@ exports.oneMessage = (req, res, next) => {
         if (userFound || userFound.isAdmin === true) {
             models.Message.findOne({
                 where: {id: req.params.id},
-                attributes: ['content', 'attachment'],
+                attributes: ['content', 'attachment', 'id'],
                 include: [{
                     model: models.User,
                     attributes: ['firstName', 'lastName', 'job', 'id', 'attachment']
@@ -187,12 +187,12 @@ exports.modifyMessage =(req, res, next) => {
     })
     .catch(error => res.status(500).json({ error }));
 };
-exports.deleteMessage = (req, res, next) => {
 
+exports.deleteMessage = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
-    
+
     models.User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'job', 'isAdmin'],
         where: { id: userId }
@@ -204,34 +204,51 @@ exports.deleteMessage = (req, res, next) => {
             })
             .then((messageFound) => {
                 if (messageFound) {
-                    if (messageFound.UserId === userId || userFound.isAdmin === true) {
-                        if (messageFound.attachment === undefined || messageFound.attachment === null) {
-                            models.Message.destroy({
-                                where: {id: req.params.id}
+                    let fields = req.query.fields;
+                    let order = req.query.order;
+
+                    models.Comments.findAll({
+                        order: [(order != null) ? order.split(':') : ['createdAt', 'DESC']],
+                        attributes: (fields != '*' && fields != null) ? fields.split(',') : null,
+                        where: {MessageId: messageFound.id}
+                    })
+                    .then((commentsFound) => {
+                        if (messageFound.UserId === userId || userFound.isAdmin === true) {
+                            models.Comments.destroy({
+                                where: {MessageId: messageFound.id}
                             })
-                            .then(res.status(200).json({ message: "Message supprimé !"}))
-                            .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
-                        }else {
-                            const filename = messageFound.attachment.split('/images/')[1];
-                            fs.unlink(`images/${filename}`, () => {
-                            models.Message.destroy({
-                                where: {id: req.params.id}
+                            .then(() => {
+                                if (messageFound.attachment === undefined || messageFound.attachment === null) {
+                                    models.Message.destroy({
+                                        where: {id: req.params.id}
+                                    })
+                                    .then(res.status(200).json({ message: "Message supprimé !"}))
+                                    .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
+                                }else {
+                                    const filename = messageFound.attachment.split('/images/')[1];
+                                    fs.unlink(`images/${filename}`, () => {
+                                    models.Message.destroy({
+                                        where: {id: req.params.id}
+                                    })
+                                    .then(res.status(200).json({ message: "Message supprimé !"}))
+                                    .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
+                                })
+                                }
                             })
-                            .then(res.status(200).json({ message: "Message supprimé !"}))
-                            .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
-                        })
+                            .catch(error => res.status(500).json({ error, message: "Impossible de supprimer les commentaires du message, il n'est donc pas supprimer."}))
+                        } else {
+                            return res.status(400).json({ message: "Vous n'avez pas la possibilité de supprimer ce message"});
                         }
-                    } else {
-                        res.status(403).json({ message: " Vous ne pouvez pas supprimer le message"});
-                    }
+                    })
+                    .catch(error => res.status(500).json({ error, message: "Commentaires introuvables"}))
                 } else {
-                    return res.status(400).json({ message: "Impossible de supprimer le message"});
+                    return res.status(400).json({ message: "Impossible de récupérer le message"});
                 }
             })
-            .catch(error => res.status(500).json({ error, message: "Message introuvable"}));
+            .catch(error => res.status(500).json({ error, message: "Message introuvable"}))
         } else {
             return res.status(400).json({ message: "Utilisateur introuvable !"});
         }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error }))
 };
