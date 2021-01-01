@@ -43,7 +43,7 @@
                     </md-avatar>
                 </div>
                 <div id="divTextAreaResponse">
-                    <textarea id="textArea" v-model="commentToSend"  rows="2" cols="50" type="text" placeholder="Commenter ici ..."></textarea>
+                    <textarea id="textArea" v-model="commentToSend"  rows="2"  type="text" placeholder="Commenter ici ..."></textarea>
                 </div>
                 <figure>
                     <img id="iconeSend" src="@/assets/paper-plane-solid.svg" v-on:click="sendNewComment(mess.id)">
@@ -367,5 +367,18 @@
         
     }
     
+}
+@media all and (max-width: 750px) {
+    #containerAllMessages {
+        width: 100vw;
+
+        & #usersMessage {
+            width: 100vw;
+
+            & #responsePossibility {
+                width: 100vw;
+            }
+        }
+    }
 }
 </style>

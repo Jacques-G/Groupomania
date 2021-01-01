@@ -22,4 +22,11 @@
    background-color: #2d3f5e ;
    height: 100vh;
 }
+
+@media all and (max-width: 750px) {
+    #container {
+        width: 100vw;
+       
+    }
+}
 </style>

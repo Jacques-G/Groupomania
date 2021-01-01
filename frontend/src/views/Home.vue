@@ -9,7 +9,7 @@
       </div>
       <div class="buttons">
         <md-button><router-link to="/signIn" id="buttonConnect" class="md-raised md-primary">Se connecter</router-link></md-button>
-        <md-button><router-link to="/signUp" id="buttonConnect" class="md-raised md-primary">S'inscrire</router-link></md-button>
+        <md-button><router-link to="/signUp" id="buttonConnect2" class="md-raised md-primary">S'inscrire</router-link></md-button>
       </div>
     </section>
   </div>
@@ -63,7 +63,7 @@ export default {
     padding: 20px 0;
     background-color: #2d3f5e;
     
-    & #buttonConnect{
+    & #buttonConnect, #buttonConnect2{
       border-radius: 6px;
       color: #d1515a;
       text-decoration: none;
@@ -86,17 +86,25 @@ export default {
     transform: translateY(-50%);
   }*/
 }
-@media all and (max-width: 800px) // A refaire
+@media all and (max-width: 750px)
 {
-  .welcomeMess {
-    
-    margin: 0 auto;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+  .acc{
+    & figure{
+      & img{
+        width: 100vw;
+        height: auto;
+      }
+    }
+    &.welcomeMess {
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
 
+    }
   }
+  
   button {
     text-align: center;
   }

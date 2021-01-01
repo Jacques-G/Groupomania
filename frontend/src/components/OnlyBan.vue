@@ -63,4 +63,13 @@ export default {
     }
 }
 
+@media all and (max-width: 750px) {
+#containerBann {
+    width: 100vw;
+  & figure {
+    text-align: center;
+  }
+}
+}
+
 </style>

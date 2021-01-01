@@ -124,4 +124,12 @@
     }
     
 }
+
+//RESPONSIVE
+
+@media all and (max-width: 750px) {
+    #containerCreate {
+        width: 100vw;
+    }
+}
 </style>

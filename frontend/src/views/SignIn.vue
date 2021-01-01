@@ -117,9 +117,21 @@ export default {
         border-radius: 2px;
         }
     }
-    
-    
+}
+// RESPONSIVE //
+@media all and (max-width: 1024px) {
+    #containerSignIn {
 
+        & #newFormSignIn {
+            margin-top: 5%;
+            width: 100vw;
+
+            & #divForm {
+                width: 95vw;
+                margin-top: 25px;
+            }
+        }
+    }
 }
 
 

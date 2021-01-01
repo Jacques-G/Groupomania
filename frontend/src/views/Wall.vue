@@ -41,4 +41,11 @@ export default {
     background-color: #2d3f5e;
     width: 100vw;
 }
+//RESPONSIVE
+
+@media all and (max-width: 750px) {
+    #containerBann {
+        width: auto;
+    }
+}
 </style>

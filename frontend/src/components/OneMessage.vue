@@ -289,4 +289,73 @@
         }
     }
 }
+
+//RESPONSIVE 
+@media all and (max-width: 1024px) {
+    #containerMessages{
+
+        & #userMessage {
+
+            & .message{
+
+                & #modifyMessage{
+                    
+                    & .pictureMessage{
+                        width: 75%;
+                        margin: 0 auto;
+                        & #imageMessage{
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@media all and (max-width: 800px) {
+    #containerMessages{
+        width: 100vw;
+        & #userMessage {
+
+            & .message{
+
+                & #modifyMessage{
+                    width: 100%;
+                    & .pictureMessage{
+                        width: 75%;
+                        margin: 0 auto;
+                        & #imageMessage{
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@media all and (max-width: 750px) {
+    #containerMessages{
+        width: 100vw;
+        padding: 0;
+        & #userMessage {
+            width: 100vw;
+            margin: 25px 0;
+            & .message{
+
+                & #modifyMessage{
+                    
+                    & .pictureMessage{
+                        width: 75%;
+                        margin: 0 auto;
+                        & #imageMessage{
+                            text-align: center;
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 </style>

@@ -129,4 +129,19 @@ export default {
     }
 }
 
+//RESPONSIVE 
+@media all and (max-width: 750px) {
+#containerSignUp{
+    height: auto;
+
+    & #newForm{
+
+        & #idForm{
+            width: 95vw;
+            margin-bottom: 10px;
+        }
+    }
+}
+}
+
 </style>

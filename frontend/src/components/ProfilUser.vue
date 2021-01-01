@@ -1,4 +1,4 @@
-s<template>
+<template>
     <div id="containerProfil">
         <div id="pageUser">
             <figure>
@@ -20,7 +20,7 @@ s<template>
                 <p>Poste occupé :</p>
             </div>
             <div id="user">
-                <p v-if="user.attachment !== null"> {{ user.attachment }}</p>
+                <p id="addressAttachment" v-if="user.attachment !== null"> {{ user.attachment }}</p>
                 <p v-else>Pas de photo de profil</p>
                 <transition name="t">
                     <div v-if="!modifyJob" class="inputAvatar">
@@ -269,6 +269,31 @@ export default {
 
         & #deleteButton {
             color: red;
+        }
+    }
+}
+
+@media all and (max-width: 750px) {
+    #containerProfil {
+        width: 100vw;
+        height: auto;
+        & #profil{
+
+            & #title{
+                display: none;
+            }
+
+            & #user{
+                width: 100vw;
+                text-align: center;
+                margin: 0 auto;
+                & #addressAttachment{
+                    width: 95vw;
+                    word-wrap: break-word;
+                    //overflow-x: hidden
+                }
+
+            }
         }
     }
 }

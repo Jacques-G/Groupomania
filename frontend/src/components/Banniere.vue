@@ -28,5 +28,15 @@ export default {
   
 }
 
+//RESPONSIVE 
+@media all and (max-width: 750px) {
+.banniere {
+
+  & figure {
+    text-align: center;
+  }
+}
+}
+
 
 </style>
