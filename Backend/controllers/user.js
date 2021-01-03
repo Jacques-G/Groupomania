@@ -42,7 +42,7 @@ exports.signup = (req, res, next) => { //Inscription au site
     }
 
     if (!pwRegex.test(password)) {
-        return res.status(400).json({ message : 'Votre mot de passe doit contenir entre 4 et 8 caractères et contenir au moins 1 nombre'});
+        return res.status(400).json({ message : 'Votre mot de passe doit contenir entre 4 et 8 caractères et au moins 1 nombre'});
     }
 
     models.User.findOne({ // Je vérifie que l'email n'existe pas déjà
