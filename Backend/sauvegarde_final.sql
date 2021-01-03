@@ -25,16 +25,16 @@ DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
   `id` smallint unsigned NOT NULL AUTO_INCREMENT,
   `content` text NOT NULL,
-  `MessageId` smallint NOT NULL,
+  `MessageId` smallint unsigned NOT NULL,
   `UserId` smallint unsigned NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fkidmessage` (`MessageId`),
-  KEY `fkidusers` (`UserId`),
-  CONSTRAINT `fkidmessage` FOREIGN KEY (`MessageId`) REFERENCES `messages` (`id`),
-  CONSTRAINT `fkidusers` FOREIGN KEY (`UserId`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+  KEY `id_message` (`MessageId`),
+  KEY `com_id_user` (`UserId`),
+  CONSTRAINT `com_id_user` FOREIGN KEY (`UserId`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `id_message` FOREIGN KEY (`MessageId`) REFERENCES `messages` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,6 @@ CREATE TABLE `comments` (
 
 LOCK TABLES `comments` WRITE;
 /*!40000 ALTER TABLE `comments` DISABLE KEYS */;
-INSERT INTO `comments` VALUES (4,'Oo c\'est génial !!',114,29,'2020-12-27 10:25:39','2020-12-27'),(6,'Essayons',111,29,'2020-12-27 15:14:30','2020-12-27'),(7,'test de modif',114,30,'2020-12-27 22:00:00','2020-12-27'),(21,'COol ça',122,33,'2021-01-01 12:45:03','2021-01-01'),(22,'Bienvenu',122,30,'2021-01-01 12:45:27','2021-01-01'),(23,'Il est trop Beau',123,33,'2021-01-01 12:46:57','2021-01-01');
 /*!40000 ALTER TABLE `comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,14 +54,16 @@ DROP TABLE IF EXISTS `messages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `messages` (
-  `id` smallint NOT NULL AUTO_INCREMENT,
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
   `content` text NOT NULL,
   `attachment` varchar(120) DEFAULT NULL,
   `updatedAt` date NOT NULL,
-  `UserId` smallint NOT NULL,
+  `UserId` smallint unsigned NOT NULL,
   `createdAt` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  KEY `id_user` (`UserId`),
+  CONSTRAINT `id_user` FOREIGN KEY (`UserId`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +72,6 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (111,'Bonjour à tous, Bienvenue sur notre super réseau social','http://localhost:3000/images/téléchargement_(2).jpg1609063934132.jpg','2020-12-27',29,'2020-12-23 08:12:55'),(114,'Super contente d\'avoir un si bel outil pour échanger !!',NULL,'2020-12-23',30,'2020-12-23 08:47:17'),(122,'Bonjourt tout le monde',NULL,'2021-01-01',33,'2021-01-01 12:44:56'),(123,'Suis trop content','http://localhost:3000/images/petitchat.jpg1609505206855.jpg','2021-01-01',33,'2021-01-01 12:46:46');
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +118,7 @@ CREATE TABLE `users` (
   `updatedAt` date NOT NULL,
   `attachment` varchar(120) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,7 +127,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (29,'Jacques','Garcia','jg@groupomania.fr','$2b$10$AhrdhWO2zBLFQAsMRsXvJOYMVWbRXiX3bCQMPG9nfr2zEk69Way/e','Administrateur',1,'2020-12-23','2020-12-23','http://localhost:3000/images/téléchargement.jpg1608711202779.jpg'),(30,'Marjorie','Thibaudeau','mt@groupomania.fr','$2b$10$0FUlkjcUOy/qFl0vUiz6UOq6wuz1yzq0HA35el3LnKFdl8y0lNftG','Gestionnaire',0,'2020-12-23','2020-12-23','http://localhost:3000/images/Phenomene-LE-RETOUR-DES-WONDER-WOMEN.jpg1608713251310.jpg'),(33,'Noah','Garcia','ng@groupomania.fr','$2b$10$/3LPLdrF9ErJBJYU5TEH6.UTlEOKRFfzBX7eykaijh8zUYp6txf0m','Dev',0,'2020-12-30','2020-12-30','http://localhost:3000/images/thanos-bebe-marvel.jpg1609336596499.jpg');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -140,4 +139,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-01 14:55:47
+-- Dump completed on 2021-01-03 14:12:54
