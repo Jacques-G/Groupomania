@@ -204,43 +204,22 @@ exports.deleteMessage = (req, res, next) => {
             })
             .then((messageFound) => {
                 if (messageFound) {
-                    let fields = req.query.fields;
-                    let order = req.query.order;
-
-                    models.Comments.findAll({
-                        order: [(order != null) ? order.split(':') : ['createdAt', 'DESC']],
-                        attributes: (fields != '*' && fields != null) ? fields.split(',') : null,
-                        where: {MessageId: messageFound.id}
-                    })
-                    .then((commentsFound) => {
-                        if (messageFound.UserId === userId || userFound.isAdmin === true) {
-                            models.Comments.destroy({
-                                where: {MessageId: messageFound.id}
+                    if (messageFound.attachment === undefined || messageFound.attachment === null) {
+                        models.Message.destroy({
+                            where: {id: req.params.id}
+                        })
+                        .then(res.status(200).json({ message: "Message supprimé !"}))
+                        .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
+                    }else {
+                        const filename = messageFound.attachment.split('/images/')[1];
+                        fs.unlink(`images/${filename}`, () => {
+                            models.Message.destroy({
+                                where: {id: req.params.id}
                             })
-                            .then(() => {
-                                if (messageFound.attachment === undefined || messageFound.attachment === null) {
-                                    models.Message.destroy({
-                                        where: {id: req.params.id}
-                                    })
-                                    .then(res.status(200).json({ message: "Message supprimé !"}))
-                                    .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
-                                }else {
-                                    const filename = messageFound.attachment.split('/images/')[1];
-                                    fs.unlink(`images/${filename}`, () => {
-                                    models.Message.destroy({
-                                        where: {id: req.params.id}
-                                    })
-                                    .then(res.status(200).json({ message: "Message supprimé !"}))
-                                    .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
-                                })
-                                }
-                            })
-                            .catch(error => res.status(500).json({ error, message: "Impossible de supprimer les commentaires du message, il n'est donc pas supprimer."}))
-                        } else {
-                            return res.status(400).json({ message: "Vous n'avez pas la possibilité de supprimer ce message"});
-                        }
-                    })
-                    .catch(error => res.status(500).json({ error, message: "Commentaires introuvables"}))
+                            .then(res.status(200).json({ message: "Message supprimé !"}))
+                            .catch(error => res.status(500).json({ error, message: " Impossible de supprimer le message"}));
+                        })
+                    }
                 } else {
                     return res.status(400).json({ message: "Impossible de récupérer le message"});
                 }
