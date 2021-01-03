@@ -1,88 +1,93 @@
 <template>
-    <div id="containerAllMessages">
-        <div id="usersMessage" v-for="mess in messages" :key="mess.id"> <!--Boucle sur la base de donnée pour afficher ltous les messages-->
-            <div class="userToMessage">
-                <div id="avatarUser"> 
-                    <div v-if="mess.User.attachment === null">
-                        <md-avatar>
-                            <img class="userPicture" src="@/assets/users-solid.svg/">
+    <div id="containerAllMessages" >
+        <div v-if="messages.length !== 0">
+            <div id="usersMessage" v-for="mess in messages" :key="mess.id"> <!--Boucle sur la base de donnée pour afficher ltous les messages-->
+                <div class="userToMessage">
+                    <div id="avatarUser"> 
+                        <div v-if="mess.User.attachment === null">
+                            <md-avatar>
+                                <img class="userPicture" src="@/assets/users-solid.svg/">
+                            </md-avatar>
+                        </div>
+                        <div v-else>
+                            <md-avatar>
+                                <img class="userPicture" v-bind:src="mess.User.attachment" alt="photo de profil">
+                            </md-avatar>
+                        </div>
+                        <div id="nameAndJobUser">
+                            <p class="user">{{mess.User.firstName}} {{mess.User.lastName}}</p>
+                            <p class="job"><span>{{ mess.User.job }}</span></p>
+                        </div>
+                    </div>
+                    <div id="options">
+                        <p> {{ mess.updatedAt }}</p>
+                        <img v-on:click="select(mess.id)" v-if="userConnected === mess.User.id || user.isAdmin === true" src="@/assets/cog-solid.svg">
+                    </div>
+                </div>  
+                <div class="message">
+                    <div>
+                        <figure class="pictureMessage" v-if="mess.attachment !== undefined || mess.attachment !== null">
+                            <img id="picturePost" v-bind:src="mess.attachment" >
+                        </figure>
+                    </div>
+                    <p class="content">{{mess.content}}</p>
+                </div>
+                <div id="responsePossibility">
+                    <div v-if="user.attachment === null">
+                        <md-avatar class="mdAvatar">
+                            <img class="avatarResponse"  src="@/assets/users-solid.svg/">
                         </md-avatar>
                     </div>
                     <div v-else>
-                        <md-avatar>
-                            <img class="userPicture" v-bind:src="mess.User.attachment" alt="photo de profil">
+                        <md-avatar class="mdAvatar">
+                            <img class="avatarResponse" v-bind:src="user.attachment" alt="photo de profil">
                         </md-avatar>
                     </div>
-                    <div id="nameAndJobUser">
-                        <p class="user">{{mess.User.firstName}} {{mess.User.lastName}}</p>
-                        <p class="job"><span>{{ mess.User.job }}</span></p>
+                    <div id="divTextAreaResponse">
+                        <textarea id="textArea" v-model="commentToSend"  rows="2"  type="text" placeholder="Commenter ici ..."></textarea>
                     </div>
-                </div>
-                <div id="options">
-                    <p> {{ mess.updatedAt }}</p>
-                    <img v-on:click="select(mess.id)" v-if="userConnected === mess.User.id || user.isAdmin === true" src="@/assets/cog-solid.svg">
-                </div>
-            </div>  
-            <div class="message">
-                <div>
-                    <figure class="pictureMessage" v-if="mess.attachment !== undefined || mess.attachment !== null">
-                        <img id="picturePost" v-bind:src="mess.attachment" >
+                    <figure>
+                        <img id="iconeSend" src="@/assets/paper-plane-solid.svg" v-on:click="sendNewComment(mess.id)">
                     </figure>
                 </div>
-                <p class="content">{{mess.content}}</p>
-            </div>
-            <div id="responsePossibility">
-                <div v-if="user.attachment === null">
-                    <md-avatar class="mdAvatar">
-                        <img class="avatarResponse"  src="@/assets/users-solid.svg/">
-                    </md-avatar>
-                </div>
-                <div v-else>
-                    <md-avatar class="mdAvatar">
-                        <img class="avatarResponse" v-bind:src="user.attachment" alt="photo de profil">
-                    </md-avatar>
-                </div>
-                <div id="divTextAreaResponse">
-                    <textarea id="textArea" v-model="commentToSend"  rows="2"  type="text" placeholder="Commenter ici ..."></textarea>
-                </div>
-                <figure>
-                    <img id="iconeSend" src="@/assets/paper-plane-solid.svg" v-on:click="sendNewComment(mess.id)">
-                </figure>
-            </div>
-            <div id="responsesOfCom">
-                <div id="boucle" v-for="com in comments" :key="com.id">
-                    <div id="responseMessage" v-if="com.MessageId === mess.id">
-                        <div id="verifattachment">
-                            <div v-if="com.User.attachment === null || com.User.attachment === undefined">
-                                <md-avatar class="avatarResponses">
-                                    <img src="@/assets/users-solid.svg" alt="photo de profil">
-                                </md-avatar>
-                            </div>
-                            <div v-else>
-                                <md-avatar class="avatarResponses">
-                                    <img v-bind:src="com.User.attachment" alt="photo de profil">
-                                </md-avatar>
-                            </div>
-                        </div>
-                        <div id="userResponses">
-                            <div id="responses">
-                                <div id="nameResponses">
-                                    <p> {{com.User.firstName}} {{com.User.lastName}}</p>
+                <div id="responsesOfCom">
+                    <div id="boucle" v-for="com in comments" :key="com.id">
+                        <div id="responseMessage" v-if="com.MessageId === mess.id">
+                            <div id="verifattachment">
+                                <div v-if="com.User.attachment === null || com.User.attachment === undefined">
+                                    <md-avatar class="avatarResponses">
+                                        <img src="@/assets/users-solid.svg" alt="photo de profil">
+                                    </md-avatar>
                                 </div>
-                                <div id="contentResponse">
-                                    {{com.content}}
+                                <div v-else>
+                                    <md-avatar class="avatarResponses">
+                                        <img v-bind:src="com.User.attachment" alt="photo de profil">
+                                    </md-avatar>
                                 </div>
                             </div>
-                            <div id="responsesPossibility" v-if="userConnected === com.User.id || user.isAdmin === true">
-                                <figure id="figureResponses">
-                                    <img class="imgResponsesDelete" src="@/assets/times-solid.svg" alt="icone de suppression" v-on:click="deleteComment(com.id)">
-                                </figure>
+                            <div id="userResponses">
+                                <div id="responses">
+                                    <div id="nameResponses">
+                                        <p> {{com.User.firstName}} {{com.User.lastName}}</p>
+                                    </div>
+                                    <div id="contentResponse">
+                                        {{com.content}}
+                                    </div>
+                                </div>
+                                <div id="responsesPossibility" v-if="userConnected === com.User.id || user.isAdmin === true">
+                                    <figure id="figureResponses">
+                                        <img class="imgResponsesDelete" src="@/assets/times-solid.svg" alt="icone de suppression" v-on:click="deleteComment(com.id)">
+                                    </figure>
+                                </div>
                             </div>
+                        
                         </div>
-                       
                     </div>
                 </div>
             </div>
+        </div>
+        <div v-else id="emptyMessages">
+            <p>Poster le premier message !</p>
         </div>
     </div>
 </template>
@@ -144,7 +149,6 @@
             .then(response => {
                 let userToConnected = response.data.User
                 this.user = userToConnected;
-                console.log(this.user)
             })
             .catch(error => {
                 alert(error);
@@ -198,8 +202,9 @@
     transition: opacity 2s;
 }
 #containerAllMessages {
-    
+    height: 100vh;
     & #usersMessage{
+        
         background-color: white;
         border: solid 1px black;
         margin: 50px auto;
@@ -364,6 +369,16 @@
                 
             }
         }
+        
+    }
+
+    & #emptyMessages{
+        height: 100vh;
+        color: white;
+        //text-align: center;
+        display: flex;
+        justify-content: center;
+        margin: auto;
         
     }
     

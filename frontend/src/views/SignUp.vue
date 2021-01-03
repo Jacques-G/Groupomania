@@ -13,6 +13,7 @@
                                 <md-field>
                                     <label for="firstName">Prénom</label>
                                     <md-input type="firstName" name="firstName" id="firstName" autocomplete="firstName" v-model="firstName" required />
+                                    
                                 </md-field>
                             </div>
                         </div>
@@ -29,7 +30,9 @@
                                 <md-field>
                                     <label for="email">Email</label>
                                     <md-input type="email" name="email" id="email" autocomplete="email" v-model="email" required />
+                                    
                                 </md-field>
+                                <p id="validEmail" v-if="emailIsvalid(this.email) === false">Veuillez entrer une adresse email valide.</p>
                             </div>
                         </div>
                         <div class="md-layout md-gutter">
@@ -45,12 +48,15 @@
                                 <md-field>
                                     <label for="password">Mot de passe</label>
                                     <md-input type="password" name="password" id="password" autocomplete="password" v-model="password" required />
+                                    
                                 </md-field>
+                                <p id="validPassword" v-if="passwordIsValid(this.password) === false"> Votre mot de passe doit contenir entre 4 et 8 caractères et au moins 1 chiffre</p>
                             </div>
                         </div>
                     </md-card-content>
                     <md-card-actions>
-                        <md-button class="md-primary" v-on:click="envoyer">S'inscrire </md-button>
+                        <md-button id="button" class="md-primary"  v-if="emailIsvalid(this.email) === false || passwordIsValid(this.password) === false" disabled="">S'inscrire </md-button>
+                        <md-button  class="md-primary" v-on:click="envoyer" v-else>S'inscrire</md-button>
                     </md-card-actions>
                 </div>
             </form>
@@ -58,6 +64,7 @@
     </div>
 </template>
 <script>
+
 import Banniere from "@/components/Banniere" //Import du composant Banniere
 import axios from "axios" // Import d'Axios pour requete HTTP
 import router from "../router/index"// Permet la redirection
@@ -72,6 +79,7 @@ Vue.use(MdCard)
 Vue.use(MdField)
 Vue.use(MdButton)
 
+
 export default {
     components: {
         Banniere
@@ -83,7 +91,7 @@ export default {
             lastName: "",
             email: "",
             password: "",
-            job: "",
+            job: ""
         }
     },
     methods: {
@@ -106,15 +114,24 @@ export default {
                     }, 1000)
                 })
                 .catch((error) => alert(error))
-        }
-    }
+        },
+        emailIsvalid: function(value) {
+            return /^[a-zA-Z0-9.:#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,3}$/.test(value);
+            
+        },
+        passwordIsValid: function(value) {
+            return /^(?=.*\d).{4,8}$/.test(value)
+            
+        },
+    },
 }
 </script>
 <style lang="scss" scoped>
 
 #containerSignUp{
-    height: 100vh;
+    //height: 100vh;
     background-color: #2d3f5e;
+    padding-bottom: 20px;
      & #newForm{
         display: flex;
         justify-content: center;
@@ -128,9 +145,18 @@ export default {
         width: 50vw;
         border-radius: 2px;
 
-         & span{
+        & span{
                 color: red;
-            }
+        }
+
+        & #validEmail{
+            color: red;
+            font-size: 10px;
+        }
+        & #validPassword{
+            color: red;
+            font-size: 10px;
+        }
     }
 }
 
