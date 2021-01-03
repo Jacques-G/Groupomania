@@ -53,7 +53,7 @@
                 <div id="boucle" v-for="com in comments" :key="com.id">
                     <div id="responseMessage" v-if="com.MessageId === mess.id">
                         <div id="verifattachment">
-                            <div v-if="mess.User.attachment === null || mess.User.attachment === undefined">
+                            <div v-if="com.User.attachment === null || com.User.attachment === undefined">
                                 <md-avatar class="avatarResponses">
                                     <img src="@/assets/users-solid.svg" alt="photo de profil">
                                 </md-avatar>

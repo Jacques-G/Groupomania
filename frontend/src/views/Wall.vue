@@ -40,6 +40,7 @@ export default {
 #container {
     background-color: #2d3f5e;
     width: 100vw;
+    //height: 100vh;
 }
 //RESPONSIVE
 
