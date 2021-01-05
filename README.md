@@ -9,12 +9,12 @@ Pour pouvoir utiliser l'api veuillez procéder aux étapes suivantes :
 
 1/ Backend: 
 
-  a/ Diriger vous sur mon dossier Backend et cloner l'intégralité du dossier
-  b/ Lancez Node.js et placez vous sur son dossier d'installation (commande: cd nomDeMonDossier/nomDeMonSousDossier/etc..)
-  c/ Tapez la commande : npm init 
-  d/ Pour voir les dépendances utiliser dirigez-vous sur le fichier "package.json"
-  e/ Pensez à renomer le fichier ".env.sample" en ".env" et de remplacer les informations concernant votre base de donnée.
-  f/ Lancez le server avec la commande "npm start" ou "nodemon server"
+  a/ Diriger vous sur mon dossier Backend et cloner l'intégralité du dossier \
+  b/ Lancez Node.js et placez vous sur son dossier d'installation (commande: cd nomDeMonDossier/nomDeMonSousDossier/etc..)\
+  c/ Tapez la commande : npm init \
+  d/ Pour voir les dépendances utiliser dirigez-vous sur le fichier "package.json"\
+  e/ Pensez à renomer le fichier ".env.sample" en ".env" et de remplacer les informations concernant votre base de donnée.\
+  f/ Lancez le server avec la commande "npm start" ou "nodemon server"\
 
 2/ Base de données
     
@@ -23,9 +23,9 @@ Pour pouvoir utiliser l'api veuillez procéder aux étapes suivantes :
    
 3/ Frontend
 
-  a/ Diriger vous sur mon dossier frontend et cloner l'intégralité du dossier
-  b/ Lancez un nouvelle fenêtre Node.js et placez vous sur son dossier d'installation (commande: cd nomDeMonDossier/nomDeMonSousDossier/etc..)
-  c/ Tapez la commande : npm init 
-  d/ Pour voir les dépendances utiliser dirigez-vous sur le fichier "package.json"
+  a/ Diriger vous sur mon dossier frontend et cloner l'intégralité du dossier\
+  b/ Lancez un nouvelle fenêtre Node.js et placez vous sur son dossier d'installation (commande: cd nomDeMonDossier/nomDeMonSousDossier/etc..)\
+  c/ Tapez la commande : npm init \
+  d/ Pour voir les dépendances utiliser dirigez-vous sur le fichier "package.json"\
   e/ Lancez l'application avec la commande "npm run serve".
   
