@@ -1,6 +1,6 @@
 <template>
     <div id="containerAllMessages" >
-        <div v-if="messages.length !== 0">
+        <div v-if="messages.length !== 0" id="fullMessage">
             <div id="usersMessage" v-for="mess in messages" :key="mess.id"> <!--Boucle sur la base de donnée pour afficher ltous les messages-->
                 <div class="userToMessage">
                     <div id="avatarUser"> 
@@ -202,7 +202,7 @@
     transition: opacity 2s;
 }
 #containerAllMessages {
-    height: 100vh;
+    //height: 100vh;
     & #usersMessage{
         
         background-color: white;
@@ -380,6 +380,9 @@
         justify-content: center;
         margin: auto;
         
+    }
+    & #fullMessage{
+        height: auto;
     }
     
 }
