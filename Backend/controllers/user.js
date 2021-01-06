@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt'); // Protection du mot de passe utilisateur
 const models = require('../models');
 
 const fs = require('fs');
-const { measureMemory } = require('vm');
 
 
 
