@@ -334,6 +334,7 @@
                             & #nameResponses{
                                 font-weight: bold;
                                 margin-top: -10px;
+                                text-align: left;
                             }
 
                             & #contentResponse{
