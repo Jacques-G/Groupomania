@@ -2,7 +2,7 @@
     <div id="containerProfil">
         <div id="pageUser">
             <figure>
-                <img src="@/assets/users-solid.svg">
+                <img src="@/assets/users-solid.svg" alt="Image de la page Profil">
             </figure>
             <h1>Mon Profil utilisateur </h1>
         </div>

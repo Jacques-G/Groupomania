@@ -4,12 +4,12 @@
             <div class="userToMessage">
                 <div v-if="avatarUrl === null">
                     <md-avatar>
-                        <img class="userPicture" src="@/assets/users-solid.svg/">
+                        <img class="userPicture" src="@/assets/users-solid.svg/" alt="photo de profil">
                     </md-avatar>
                 </div>
                 <div v-else>
                     <md-avatar>
-                        <img class="userPicture" v-bind:src="avatarUrl" alt="photo de profil">
+                        <img class="userPicture" v-bind:src="avatarUrl" alt="photo de profil" >
                     </md-avatar>
                 </div>
                 <div id="nameAndJobUser">

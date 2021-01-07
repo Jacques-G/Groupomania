@@ -6,7 +6,7 @@
                     <div id="avatarUser"> 
                         <div v-if="mess.User.attachment === null">
                             <md-avatar>
-                                <img class="userPicture" src="@/assets/users-solid.svg/">
+                                <img class="userPicture" src="@/assets/users-solid.svg/" alt="photo de profil">
                             </md-avatar>
                         </div>
                         <div v-else>
@@ -21,13 +21,13 @@
                     </div>
                     <div id="options">
                         <p> {{ mess.updatedAt }}</p>
-                        <img v-on:click="select(mess.id)" v-if="userConnected === mess.User.id || user.isAdmin === true" src="@/assets/cog-solid.svg">
+                        <img v-on:click="select(mess.id)" v-if="userConnected === mess.User.id || user.isAdmin === true" src="@/assets/cog-solid.svg" alt="rouage pour modification">
                     </div>
                 </div>  
                 <div class="message">
                     <div>
                         <figure class="pictureMessage" v-if="mess.attachment !== undefined || mess.attachment !== null">
-                            <img id="picturePost" v-bind:src="mess.attachment" >
+                            <img id="picturePost" v-bind:src="mess.attachment" alt="image du message">
                         </figure>
                     </div>
                     <p class="content">{{mess.content}}</p>
@@ -35,7 +35,7 @@
                 <div id="responsePossibility">
                     <div v-if="user.attachment === null">
                         <md-avatar class="mdAvatar">
-                            <img class="avatarResponse"  src="@/assets/users-solid.svg/">
+                            <img class="avatarResponse"  src="@/assets/users-solid.svg/" alt="photo de profil">
                         </md-avatar>
                     </div>
                     <div v-else>
@@ -47,7 +47,7 @@
                         <textarea id="textArea" v-model="commentToSend"  rows="2"  type="text" placeholder="Commenter ici ..."></textarea>
                     </div>
                     <figure>
-                        <img id="iconeSend" src="@/assets/paper-plane-solid.svg" v-on:click="sendNewComment(mess.id)">
+                        <img id="iconeSend" src="@/assets/paper-plane-solid.svg" v-on:click="sendNewComment(mess.id)" alt="envpyer le commentaire">
                     </figure>
                 </div>
                 <div id="responsesOfCom">
@@ -343,7 +343,7 @@
                         }
 
                         & #responsesPossibility{
-
+                            
                             & #figureResponses {
                                 
                                 width: 30px;
@@ -393,10 +393,6 @@
 
         & #usersMessage {
             width: 100vw;
-
-            & #responsePossibility {
-                width: 100vw;
-            }
         }
     }
 }

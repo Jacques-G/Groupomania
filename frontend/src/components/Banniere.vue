@@ -1,7 +1,7 @@
 <template>
   <div class="banniere">
     <figure>
-      <router-link to="/"><img src="../assets/icon-left-font-monochrome-white.png"></router-link>
+      <router-link to="/"><img src="../assets/icon-left-font-monochrome-white.png" alt="logo"></router-link>
     </figure>
   </div>
 </template>

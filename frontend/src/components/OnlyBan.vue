@@ -1,12 +1,12 @@
 <template>
      <div id="containerBann">
         <figure>
-            <router-link to="wall"><img src="../assets/icon.png"></router-link>
+            <router-link to="wall"><img src="../assets/icon.png" alt="logo"></router-link>
         </figure>
         <div id="compte">
             <router-link to="/">
                 <md-avatar class="logDisconnect">
-                    <img src="@/assets/sign-out-alt-solid.svg" v-on:click="disconnected">
+                    <img src="@/assets/sign-out-alt-solid.svg" v-on:click="disconnected" alt="Se déconnecter">
                 </md-avatar>  
             </router-link>
         </div>

@@ -1,7 +1,7 @@
 <template>
     <div id="containerBann">
         <figure>
-            <img src="../assets/icon.png">
+            <img src="../assets/icon.png" alt="logo">
         </figure>
         <div id="compte">
             <div id="images">
@@ -20,7 +20,7 @@
             </div>
             <router-link to="/">
                 <md-avatar class="logDisconnect">
-                    <img src="@/assets/sign-out-alt-solid.svg" v-on:click="disconnected">
+                    <img src="@/assets/sign-out-alt-solid.svg" v-on:click="disconnected" alt="Se deconnecter">
                 </md-avatar>  
             </router-link>
         </div>
