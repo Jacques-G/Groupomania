@@ -27,7 +27,7 @@
                 <div class="message">
                     <div>
                         <figure class="pictureMessage" v-if="mess.attachment !== undefined || mess.attachment !== null">
-                            <img id="picturePost" v-bind:src="mess.attachment" alt="image du message">
+                            <img id="picturePost" v-bind:src="mess.attachment">
                         </figure>
                     </div>
                     <p class="content">{{mess.content}}</p>
